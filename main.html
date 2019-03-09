@@ -2,17 +2,34 @@
 <meta charset="utf-8">
 <head>
 	<title>Trip Analyzer</title>
-	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./css/style.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">	  
 </head>
 <body>
   <script src="./js/d3.v3.min.js"></script>
   <script src="./js/topojson.v1.min.js"></script>  
-  <script src="./js/datamaps.world.min.js?v=1"></script>  	
+  <script src="./js/datamaps.world.min.js?v=1"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>	
 	
-	<div style="text-align: center;">
+	
+	<div id="dialog-form" title="- Tell us more about you -">
+			
+		<form>
+			<fieldset>
+				<label for="name">Name</label>
+				<input type="text" name="name" id="form-name" value="" class="text ui-widget-content ui-corner-all">
+				<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+			</fieldset>
+		</form>
+	</div>
+	
+	<div id="divMain" style="text-align: center;" class="transparent">
 		<div style="display: inline-block;">
 			<div id="divContainer">
-				<div id="divInput" class="main-div"></div>	
+				<div id="divInput" class="main-div">
+					user input: <input type="text" name="name" id="name" value="">				
+				</div>	
 				<div id="divMap" class="main-div"></div>
 				<div id="divBottom" class="main-div">chart</div>
 				<div id="divRight" class="main-div">right</div>
@@ -22,6 +39,49 @@
 	<div>
       
 	<script>
+	
+		// user input
+		$( function() {
+			
+			var dialog, form,	name = $( "#form-name" );					
+
+			function processUserInput() {							
+						
+					var input = name.val();											
+					dialog.dialog( "close" );				
+					
+					$("#divMain").removeClass("transparent");
+					$("#divMain").addClass("fullyVisible");															
+					$("#name").val(input);
+			}
+	 
+			dialog = $("#dialog-form").dialog({
+				autoOpen: false,
+				height: 400,
+				width: 350,
+				modal: true,
+				buttons: {
+					"Submit": processUserInput
+				},
+				close: function() {
+					form[0].reset();					
+				}
+			});
+	 
+			form = dialog.find( "form" ).on( "submit", function( event ) {
+				event.preventDefault();				
+				processUserInput();
+			});
+	 
+			$(document).ready(function(){ 
+				dialog.dialog( "open" );
+			})
+	 
+	 
+			
+		} );		
+			
+		
    
 		//basic map config with custom fills
 		var map = new Datamap({
