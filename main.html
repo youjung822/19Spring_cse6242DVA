@@ -3,22 +3,27 @@
 <head>
 	<title>Trip Analyzer</title>
 	<link rel="stylesheet" href="./css/style.css">
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">	  
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">	
 </head>
 <body>
   <script src="./js/d3.v3.min.js"></script>
   <script src="./js/topojson.v1.min.js"></script>  
   <script src="./js/datamaps.world.min.js?v=1"></script>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>	
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>			
 	
 	
 	<div id="dialog-form" title="- Tell us more about you -">
 			
 		<form>
-			<fieldset>
-				<label for="name">Name</label>
-				<input type="text" name="name" id="form-name" value="" class="text ui-widget-content ui-corner-all">
+			<fieldset style="height:250px;">
+				<label for="name" class="form-label">Budget</label>				
+				<ul id="selectBudget">
+					<li class="ui-widget-content" id="budget-low">Low</li>
+					<li class="ui-widget-content" id="budget-mid">Mid</li>
+					<li class="ui-widget-content" id="budget-high">High</li>
+				</ol>
+				
 				<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
 			</fieldset>
 		</form>
@@ -39,26 +44,38 @@
 	<div>
       
 	<script>
-	
+			
 		// user input
 		$( function() {
+			
+			$("#selectBudget").selectable();
 			
 			var dialog, form,	name = $( "#form-name" );					
 
 			function processUserInput() {							
-						
-					var input = name.val();											
+																			
 					dialog.dialog( "close" );				
 					
 					$("#divMain").removeClass("transparent");
 					$("#divMain").addClass("fullyVisible");															
-					$("#name").val(input);
+					
+					var selectedBudget = "";
+					if ($("#budget-low").hasClass("ui-selected"))
+						selectedBudget = "low";
+					else if ($("#budget-mid").hasClass("ui-selected"))
+						selectedBudget = "mid";
+					else if ($("#budget-high").hasClass("ui-selected"))
+						selectedBudget = "high";
+																	
+					$("#name").val(selectedBudget);
+					
+					
 			}
 	 
 			dialog = $("#dialog-form").dialog({
 				autoOpen: false,
 				height: 400,
-				width: 350,
+				width: 600,
 				modal: true,
 				buttons: {
 					"Submit": processUserInput
