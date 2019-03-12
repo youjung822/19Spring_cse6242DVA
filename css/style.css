@@ -50,8 +50,7 @@ body {
 
 .form-label {
 	vertical-align: super; 
-	float: left;
-	margin: 8px;
+	float: left;	
 	font-weight:bold;
 }
 	
@@ -59,10 +58,17 @@ body {
     visibility: hidden;
 }
 
+fieldset div {
+	
+	padding:10px;
+	
+}
+
 // selectable
 #feedback { font-size: 1em; }
-#selectBudget .ui-selecting { background: #FECA40; }
-#selectBudget .ui-selected { background: #F39814; color: white; }
-#selectBudget { list-style-type: none; margin: 0; padding: 0; margin-left:150px; }
-#selectBudget li { padding: 0.4em; font-size: 1em; height: 18px; display:inline-block; width:80px;}
+.select-box .ui-selecting { background: #FECA40; }
+.select-box .ui-selected { background: #F39814; color: white; }
+.select-box { list-style-type: none; margin: 0; padding: 0; margin-left:150px; }
+.select-box li { padding: 0.4em; font-size: 1em; height: 18px; display:inline-block; width:80px;}
 // ---
+

@@ -3,26 +3,56 @@
 <head>
 	<title>Trip Analyzer</title>
 	<link rel="stylesheet" href="./css/style.css">
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">	
+	<link rel="stylesheet" href="./css/jquery-ui.css">	
+	<link rel="stylesheet" type="text/css" href="./css/zInput_default_stylesheet.css">
 </head>
 <body>
-  <script src="./js/d3.v3.min.js"></script>
-  <script src="./js/topojson.v1.min.js"></script>  
-  <script src="./js/datamaps.world.min.js?v=1"></script>
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>			
+	<script src="./js/import/d3.v3.min.js"></script> 
+	<script src="./js/import/topojson.v1.min.js"></script>  
+	<script src="./js/import/datamaps.world.min.js?v=1"></script>
+	<script src="./js/import/jquery-1.12.4.js"></script>
+	<script src="./js/import/jquery-ui.js"></script>				
+	<script src="./js/import/zInput.js"></script>			
 	
-	
-	<div id="dialog-form" title="- Tell us more about you -">
-			
+	<div id="inputDialog" title="- Tell us more about the trip -">			
 		<form>
-			<fieldset style="height:250px;">
-				<label for="name" class="form-label">Budget</label>				
-				<ul id="selectBudget">
-					<li class="ui-widget-content" id="budget-low">Low</li>
-					<li class="ui-widget-content" id="budget-mid">Mid</li>
-					<li class="ui-widget-content" id="budget-high">High</li>
-				</ol>
+			<fieldset style="height:280px;">
+			
+				<div>
+					<label for="name" class="form-label">Budget</label>				
+					<ul id="selectBudget" class="select-box">
+						<li class="ui-widget-content" id="budget-low">Low</li>
+						<li class="ui-widget-content" id="budget-mid">Mid</li>
+						<li class="ui-widget-content" id="budget-high">High</li>
+					</ol>
+				</div>
+				
+				<div>
+					<label for="name" class="form-label">Density</label>				
+					<ul id="selectDensity" class="select-box">
+						<li class="ui-widget-content" id="density-low">Low</li>
+						<li class="ui-widget-content" id="density-mid">Mid</li>
+						<li class="ui-widget-content" id="density-high">High</li>
+					</ol>
+				</div>
+				
+				<div>
+					<label for="name" class="form-label">Trip Duration</label>				
+					<input style="margin-left:50px;" type="text" id="tripDuartion" value="" >				
+				</div>
+								
+				<div id="selectCategory">					
+					<input type="checkbox" name="check[]" title="discovering">
+					<input type="checkbox" name="check[]" title="eating">
+					<input type="checkbox" name="check[]" title="nightlife">
+					<input type="checkbox" name="check[]" title="outdoors">
+					<input type="checkbox" name="check[]" title="family">
+					<input type="checkbox" name="check[]" title="relaxing">
+					<input type="checkbox" name="check[]" title="shopping">
+					<input type="checkbox" name="check[]" title="sightseeing">
+					<input type="checkbox" name="check[]" title="sports">					
+				</div>
+								
 				
 				<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
 			</fieldset>
@@ -42,134 +72,16 @@
 			<footer>&copy; Copyright 2019 Trip Analyzer</footer>
 		</div>
 	<div>
-      
-	<script>
-			
-		// user input
-		$( function() {
-			
-			$("#selectBudget").selectable();
-			
-			var dialog, form,	name = $( "#form-name" );					
 
-			function processUserInput() {							
-																			
-					dialog.dialog( "close" );				
-					
-					$("#divMain").removeClass("transparent");
-					$("#divMain").addClass("fullyVisible");															
-					
-					var selectedBudget = "";
-					if ($("#budget-low").hasClass("ui-selected"))
-						selectedBudget = "low";
-					else if ($("#budget-mid").hasClass("ui-selected"))
-						selectedBudget = "mid";
-					else if ($("#budget-high").hasClass("ui-selected"))
-						selectedBudget = "high";
-																	
-					$("#name").val(selectedBudget);
-					
-					
-			}
-	 
-			dialog = $("#dialog-form").dialog({
-				autoOpen: false,
-				height: 400,
-				width: 600,
-				modal: true,
-				buttons: {
-					"Submit": processUserInput
-				},
-				close: function() {
-					form[0].reset();					
-				}
-			});
-	 
-			form = dialog.find( "form" ).on( "submit", function( event ) {
-				event.preventDefault();				
-				processUserInput();
-			});
-	 
-			$(document).ready(function(){ 
-				dialog.dialog( "open" );
-			})
-	 
-	 
-			
-		} );		
-			
-		
-   
-		//basic map config with custom fills
-		var map = new Datamap({
-		
-			scope: 'world',
-			element: document.getElementById('divMap'),			
-			height: 600,
-			
-			fills: {
-				defaultFill: '#eeeeee',
-				colorBlue: 'rgba(0,244,244,0.9)',
-				colorRed: 'red',
-				colorGreen: 'green',
-				colorYellow: 'yellow',
-				colorPink: 'pink',
-				colorBrown: 'brown',
-				colorBlack: 'black',
-			}
-	
-			// data: {
-				// USA: {fillKey: 'lt50' },
-				// RUS: {fillKey: 'lt50' },
-				// CAN: {fillKey: 'lt50' },
-				// BRA: {fillKey: 'gt50' },
-				// ARG: {fillKey: 'gt50'},
-				// COL: {fillKey: 'gt50' },
-				// AUS: {fillKey: 'gt50' },
-				// ZAF: {fillKey: 'gt50' },
-				// MAD: {fillKey: 'gt50' }       
-			// }
-		})
-		  
-		//sample of the arc plugin
-		// map.arc([
-			// {
-			// origin: {
-				// latitude: 40.639722,
-				// longitude: 73.778889
-			// },
-			// destination: {
-				// latitude: 37.618889,
-				// longitude: -122.375
-			// }
-			// },
-			// {
-				// origin: {
-					// latitude: 30.194444,
-					// longitude: -97.67
-				// },
-				// destination: {
-					// latitude: 25.793333,
-					// longitude: -0.290556
-				// }
-			// }
-		// ], {strokeWidth: 2});		 
-  
-		//bubbles, custom popup on hover template
-		map.bubbles([
-			{name: 'Wood', latitude: -37.81, longitude: 144.96, radius: 16, fillKey: 'colorBlue'},
-			{name: 'Brian', latitude: 22.39, longitude: 114.11, radius: 8, fillKey: 'colorRed'},
-			{name: 'Ankur', latitude: 23.39, longitude: 115.11, radius: 8, fillKey: 'colorGreen'},
-			{name: 'SiOnn', latitude: 4.21, longitude: 101.98, radius: 20, fillKey: 'colorBrown'},
-			{name: 'YouJung', latitude: 36.20, longitude: 138.25, radius: 10, fillKey: 'colorPink'},
-			{name: 'XiaoQi', latitude: 29.43, longitude: 106.91, radius: 18, fillKey: 'colorYellow'},			
-			{name: 'Georgia Tech', latitude: 33.95, longitude: -83.36, radius: 35, fillKey: 'colorBlack'},			
-		], {
-			popupTemplate: function(geo, data) { 
-				return "<div class='hoverinfo'>" + data.name + " is here</div>";
-			}
-		});
-		
+	<script src="./js/userInput.js"></script>	      
+	<script src="./js/dataMap.js"></script>			  	  
+	<script>		
+		$( function() {			
+			// initialize
+			$("#selectBudget").selectable();
+			$("#selectDensity").selectable();						
+			$("#selectCategory").zInput();		
+		});  
 	</script>
 </body>
 
