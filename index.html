@@ -63,7 +63,8 @@
 		<div style="display: inline-block;">
 			<div id="divContainer">
 				<div id="divInput" class="main-div">
-					user input: <input type="text" name="name" id="name" value="">				
+					budget: <input type="text" name="budget" id="budget" value="">
+					density: <input type="text" name="density" id="density" value="">
 				</div>	
 				<div id="divMap" class="main-div"></div>
 				<div id="divBottom" class="main-div">chart</div>
@@ -98,21 +99,32 @@
 		var cities;
 		
 		$.get("./include/connect_db.php", function(data){
-			getAllCities(data); 	
+			getAllCities(data);					
+			analyze();			
+		});
+
+		// main method to analyze based on user input / default setting if user input isn't present
+		function analyze(){
+												
+			// reset score
+			resetScore();
 
 
-			//console.log(document.getElementById("name").value);
-			 			
-			generateTop20Ranking();
+			// recommendation system
+			scoreBudget(document.getElementById("budget").value);						// budget matching						
+			scoreDensity(document.getElementById("budget").value);						// density matching			
 			
 			// todo: add more filtering steps here
 			// eg, reddit
 			// eg, sygic 
-			// --- end of todo ---
-
-			sortByScore();
-			addBubbles();
-		});
+			// --- end of recommendation system ---						
+			
+			sortByScore();					
+			generateTop20Ranking();	
+			console.log(cities); 	// testing console output
+			addBubbles();			
+			
+		}			
 		
 		// fetch all data from database
 		function getAllCities(data)
@@ -127,7 +139,53 @@
 			}						
 		}		
 		
-		// testing function: simple default ranking from top 100 cities 
+		function resetScore(){
+			for(i=0; i<cities.length; i++){				
+				cities[i]["score"] = 0;				
+			}
+		}
+		
+		function scoreBudget(budget){
+			if (budget == "") return;
+			for(i=0; i<cities.length; i++){							
+				switch(budget) {
+				  case "low":
+					if (cities[i].receipts_rank == 1 || cities[i].receipts_rank == 2 || cities[i].receipts_rank == 0)
+						cities[i]["score"] = cities[i]["score"] + 10;
+					break;
+				  case "mid":
+					if (cities[i].receipts_rank == 2 || cities[i].receipts_rank == 3 || cities[i].receipts_rank == 0)
+						cities[i]["score"] = cities[i]["score"] + 10;
+					break;
+				  case "high":
+					if (cities[i].receipts_rank == 3 || cities[i].receipts_rank == 4 || cities[i].receipts_rank == 0)
+						cities[i]["score"] = cities[i]["score"] + 10;
+				}							
+			}							
+		}
+		
+		function scoreDensity(density){
+			if (density == "") return;
+			for(i=0; i<cities.length; i++){							
+				switch(density) {
+				  case "low":
+					if (cities[i].arrivals_rank == 1 || cities[i].arrivals_rank == 2 || cities[i].arrivals_rank == 0)
+						cities[i]["score"] = cities[i]["score"] + 10;
+					break;
+				  case "mid":
+					if (cities[i].arrivals_rank == 2 || cities[i].arrivals_rank == 3 || cities[i].arrivals_rank == 0)
+						cities[i]["score"] = cities[i]["score"] + 10;
+					break;
+				  case "high":
+					if (cities[i].arrivals_rank == 3 || cities[i].arrivals_rank == 4 || cities[i].arrivals_rank == 0)
+						cities[i]["score"] = cities[i]["score"] + 10;
+				}							
+			}							
+		}		
+		
+		
+		
+		// push sorted cities into bubbleArray for UI
 		function generateTop20Ranking(){						
 			for (i = 0; i < 20; i++){
 				var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 44-i*2, fillKey: 'colorBlue'+i};

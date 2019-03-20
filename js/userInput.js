@@ -1,7 +1,7 @@
 $( function() {
 	
 	var dialog, form, name = $( "#form-name" );
-	var selectedBudget = "";
+	
 
 	function processUserInput() {							
 																	
@@ -9,17 +9,34 @@ $( function() {
 			
 			$("#divMain").removeClass("transparent");
 			$("#divMain").addClass("fullyVisible");															
-			
-			
+	
+			// ------- budget 
+			var selectedBudget = "";	
 			if ($("#budget-low").hasClass("ui-selected"))
 				selectedBudget = "low";
 			else if ($("#budget-mid").hasClass("ui-selected"))
 				selectedBudget = "mid";
 			else if ($("#budget-high").hasClass("ui-selected"))
 				selectedBudget = "high";
-															
-			$("#name").val(selectedBudget);
+											
+			// update to top panel
+			$("#budget").val(selectedBudget);
 			
+			// ------- density
+			var selectedDensity = "";	
+			if ($("#density-low").hasClass("ui-selected"))
+				selectedDensity = "low";
+			else if ($("#density-mid").hasClass("ui-selected"))
+				selectedDensity = "mid";
+			else if ($("#density-high").hasClass("ui-selected"))
+				selectedDensity = "high";
+											
+			// update to top panel
+			$("#density").val(selectedDensity);
+			
+								
+			// call to rerun analyze
+			analyze();						
 			
 	}
 
