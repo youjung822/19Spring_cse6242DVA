@@ -4,10 +4,29 @@ var map = new Datamap({
 	scope: 'world',
 	element: document.getElementById('divMap'),			
 	height: 600,
-	
+			
 	fills: {
 		defaultFill: '#eeeeee',
-		colorBlue: 'rgba(0,244,244,0.9)',
+		colorBlue0: 'rgba(0,244,244,1)',
+		colorBlue1: 'rgba(0,244,244,0.95)',
+		colorBlue2: 'rgba(0,244,244,0.9)',
+		colorBlue3: 'rgba(0,244,244,0.85)',
+		colorBlue4: 'rgba(0,244,244,0.8)',
+		colorBlue5: 'rgba(0,244,244,0.75)',
+		colorBlue6: 'rgba(0,244,244,0.7)',
+		colorBlue7: 'rgba(0,244,244,0.65)',
+		colorBlue8: 'rgba(0,244,244,0.6)',
+		colorBlue9: 'rgba(0,244,244,0.55)',		
+		colorBlue10: 'rgba(0,244,244,50)',
+		colorBlue11: 'rgba(0,244,244,0.45)',
+		colorBlue12: 'rgba(0,244,244,0.40)',
+		colorBlue13: 'rgba(0,244,244,0.35)',
+		colorBlue14: 'rgba(0,244,244,0.30)',
+		colorBlue15: 'rgba(0,244,244,0.25)',
+		colorBlue16: 'rgba(0,244,244,0.20)',
+		colorBlue17: 'rgba(0,244,244,0.15)',
+		colorBlue18: 'rgba(0,244,244,0.10)',
+		colorBlue19: 'rgba(0,244,244,0.05)',				
 		colorRed: 'red',
 		colorGreen: 'green',
 		colorYellow: 'yellow',
@@ -28,6 +47,9 @@ var map = new Datamap({
 		// MAD: {fillKey: 'gt50' }       
 	// }
 })
+  
+
+
   
 //sample of the arc plugin
 // map.arc([
@@ -53,17 +75,18 @@ var map = new Datamap({
 	// }
 // ], {strokeWidth: 2});		 
 
-//bubbles, custom popup on hover template
-map.bubbles([
-	{name: 'Wood', latitude: -37.81, longitude: 144.96, radius: 16, fillKey: 'colorBlue'},
-	{name: 'Brian', latitude: 22.39, longitude: 114.11, radius: 8, fillKey: 'colorRed'},
-	{name: 'Ankur', latitude: 23.39, longitude: 115.11, radius: 8, fillKey: 'colorGreen'},
-	{name: 'SiOnn', latitude: 4.21, longitude: 101.98, radius: 20, fillKey: 'colorBrown'},
-	{name: 'YouJung', latitude: 36.20, longitude: 138.25, radius: 10, fillKey: 'colorPink'},
-	{name: 'XiaoQi', latitude: 29.43, longitude: 106.91, radius: 18, fillKey: 'colorYellow'},			
-	{name: 'Georgia Tech', latitude: 33.95, longitude: -83.36, radius: 35, fillKey: 'colorBlack'},			
-	], {
-	popupTemplate: function(geo, data) { 
-		return "<div class='hoverinfo'>" + data.name + " is here</div>";
-	}
-});
+		
+
+		
+function addBubbles(){		
+		
+	map.bubbles(	
+		bubbleArray,
+		{		
+			popupTemplate: function(geo, data) { 
+				return "<div class='hoverinfo'>" + data.name + "</div>";
+			}
+		}				
+	);
+
+}

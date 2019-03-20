@@ -1,6 +1,7 @@
 $( function() {
 	
-	var dialog, form,	name = $( "#form-name" );					
+	var dialog, form, name = $( "#form-name" );
+	var selectedBudget = "";
 
 	function processUserInput() {							
 																	
@@ -9,7 +10,7 @@ $( function() {
 			$("#divMain").removeClass("transparent");
 			$("#divMain").addClass("fullyVisible");															
 			
-			var selectedBudget = "";
+			
 			if ($("#budget-low").hasClass("ui-selected"))
 				selectedBudget = "low";
 			else if ($("#budget-mid").hasClass("ui-selected"))
