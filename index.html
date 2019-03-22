@@ -67,8 +67,23 @@
 					density: <input type="text" name="density" id="density" value="">
 				</div>	
 				<div id="divMap" class="main-div"></div>
-				<div id="divBottom" class="main-div">chart</div>
-				<div id="divRight" class="main-div">top 20 accordions</div>
+				<div id="divBottom" class="main-div">
+				
+					<!-- Brian, XiaoQi, please add mock up bottom chart here -->
+				
+				
+								
+				
+				
+				</div>
+				
+				
+				<div id="divRight" class="main-div">
+				
+					<!-- Youjung, please add top 10 / 15 / 20 accordion here -->								
+				
+				
+				</div>
 			</div>			
 			<footer>&copy; Copyright 2019 Trip Analyzer</footer>
 		</div>
@@ -109,14 +124,13 @@
 			// reset score
 			resetScore();
 
-
 			// recommendation system
 			scoreBudget(document.getElementById("budget").value);						// budget matching						
 			scoreDensity(document.getElementById("budget").value);						// density matching			
 			
 			// todo: add more filtering steps here
-			// eg, reddit
-			// eg, sygic 
+			// eg, reddit sentiment, to be added by Ankur 
+			// eg, budget your trip, to be added by SiOnn			
 			// --- end of recommendation system ---						
 			
 			sortByScore();					
