@@ -110,6 +110,13 @@
 	
 	<script> 
 		
+		// configurable constant weighting 
+		// contains the weights of matching on different aspects
+		// eg, matching user's budget input, score 10
+		// matching user's density input, score 10
+		// matching user's category preference, each poi of a city would score 0.1
+		var weights = {budget: 30, density: 30, per_poi: 0.1};
+		
 		var bubbleArray = [];
 		var cities;
 		
@@ -126,7 +133,7 @@
 
 			// recommendation system
 			scoreBudget(document.getElementById("budget").value);						// budget matching						
-			scoreDensity(document.getElementById("budget").value);						// density matching			
+			scoreDensity(document.getElementById("density").value);						// density matching			
 			scoreCategory();
 						
 			// todo: add more filtering steps here
@@ -166,14 +173,14 @@
 			for(i=0; i<cities.length; i++){							
 				switch(budget) {
 				  case "low":
-					if ([1,2,0].indexOf(cities[i].receipts_rank) > -1)		cities[i].score += 10;
-					break;
+					if (cities[i].receipts_rank == 1 || cities[i].receipts_rank == 2 || cities[i].receipts_rank == 0)		cities[i].score += weights.budget;
+					continue;
 				  case "mid":
-					if ([2,3,0].indexOf(cities[i].receipts_rank) > -1)		cities[i].score += 10;					
-					break;
+					if (cities[i].receipts_rank == 2 || cities[i].receipts_rank == 3 || cities[i].receipts_rank == 0)		cities[i].score += weights.budget;
+					continue;
 				  case "high":
-					if ([3,4,0].indexOf(cities[i].receipts_rank) > -1)		cities[i].score += 10;					
-					break;
+					if (cities[i].receipts_rank == 3 || cities[i].receipts_rank == 4 || cities[i].receipts_rank == 0)		cities[i].score += weights.budget;										
+					continue;
 				}							
 			}							
 		}
@@ -184,14 +191,14 @@
 			for(i=0; i<cities.length; i++){							
 				switch(density) {
 				  case "low":
-					if ([1,2,0].indexOf(cities[i].arrivals_rank) > -1)		cities[i].score += 10;
-					break;				  				  									
+					if (cities[i].arrivals_rank == 1 || cities[i].arrivals_rank == 2 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;									  				
+					continue;
 				  case "mid":
-					if ([2,3,0].indexOf(cities[i].arrivals_rank) > -1)		cities[i].score += 10;
-					break;				  				  									
+					if (cities[i].arrivals_rank == 2 || cities[i].arrivals_rank == 3 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;										
+					continue;
 				  case "high":
-					if ([3,4,0].indexOf(cities[i].arrivals_rank) > -1)		cities[i].score += 10;
-					break;				  				  									
+					if (cities[i].arrivals_rank == 3 || cities[i].arrivals_rank == 4 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;										
+					continue;
 				}							
 			}							
 		}		
@@ -199,15 +206,15 @@
 		// calculate score based on user input selected category
 		function scoreCategory(){			
 			for(i=0; i<cities.length; i++){									
-				if ($('#chkDiscovering').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].discovering * 0.1;
-				if ($('#chkEating').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].eating * 0.1;				
-				if ($('#chkNightlife').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].nightlife * 0.1;
-				if ($('#chkOutdoors').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].hiking * 0.1;
-				if ($('#chkFamily').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].family * 0.1;
-				if ($('#chkRelaxing').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].relaxing * 0.1;
-				if ($('#chkShopping').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].shopping * 0.1;
-				if ($('#chkSightseeing').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].discovering * 0.1;
-				if ($('#chkSports').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].sightseeing * 0.1;										
+				if ($('#chkDiscovering').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].discovering * weights.per_poi;
+				if ($('#chkEating').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].eating * weights.per_poi;				
+				if ($('#chkNightlife').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].nightlife * weights.per_poi;
+				if ($('#chkOutdoors').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].hiking * weights.per_poi;
+				if ($('#chkFamily').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].family * weights.per_poi;
+				if ($('#chkRelaxing').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].relaxing * weights.per_poi;
+				if ($('#chkShopping').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].shopping * weights.per_poi;
+				if ($('#chkSightseeing').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].sightseeing * weights.per_poi;
+				if ($('#chkSports').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].sports * weights.per_poi;
 			}								
 		}				
 		
