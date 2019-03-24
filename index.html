@@ -62,19 +62,23 @@
 	<div id="divMain" style="text-align: center;" class="transparent">
 		<div style="display: inline-block;">
 			<div id="divContainer">
-				<div id="divInput" class="main-div">
+				<div id="divInput" class="main-div" style="display: none;">
 					budget: <input type="text" name="budget" id="budget" value="">
 					density: <input type="text" name="density" id="density" value="">
 				</div>	
 				<div id="divMap" class="main-div"></div>
 				<div id="divBottom" class="main-div">
 				
-					<!-- Brian, XiaoQi, please add mock up bottom chart here -->
-				
-				
-								
-				
-				
+					<!-- Brian, please add mock up bottom chart here -->
+				    <div class="chart">temperature</div>					
+					<div class="chart">PM</div>
+					
+					<!-- Ankur, please add mock up bottom chart here -->
+					<div class="chart">Word Cloud</div>
+					
+					<!-- reserved, can be deleted if no use -->
+					<div class="chart">?</div>					
+					
 				</div>
 				
 				
@@ -144,6 +148,8 @@
 			sortByScore();					
 			generateTop20Ranking();	
 			console.log(cities); 	// testing console output
+			
+			addAccordions();
 			addBubbles();			
 			
 		}			
@@ -237,6 +243,14 @@
 				}													
 			});						
 		}					
+		
+		// testing method: print text to right section 
+		function addAccordions(){		
+			document.getElementById('divRight').innerHTML = '';
+			for (i = 0; i < 20; i++) {
+				document.getElementById('divRight').innerHTML += cities[i].city + '<br/>';						
+			}
+		}
 		
 	</script>		
 	
