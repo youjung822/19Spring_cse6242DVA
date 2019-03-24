@@ -221,7 +221,7 @@
 		// push sorted cities into bubbleArray for UI
 		function generateTop20Ranking(){						
 			for (i = 0; i < 20; i++){
-				var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 44-i*2, fillKey: 'colorBlue'+i};
+				var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 44-i*2, fillKey: 'colorRed'+i};
 				bubbleArray.push(bubble);								
 			};									
 		}
