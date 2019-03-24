@@ -1,12 +1,7 @@
 <?php
 					
-    $username = "tutorial_user"; 
-    $password = "12341234";   
-    $host = "mytestdb.cen3rhkl2zlv.us-east-1.rds.amazonaws.com";
-    $database="trip.analyzer";
-    
-    $connection = mysqli_connect($host, $username, $password, $database);    
-
+	include 'db_info.php';
+        
     $myquery = "SELECT c.rank, c.city, l.lat, l.lng, a.rk as arrivals_rank, r.rk as receipts_rank, s_poi.*
 		FROM `cities` c
 		join cities_sygic_mapping m on c.rank = m.city_id 

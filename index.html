@@ -124,7 +124,7 @@
 		var bubbleArray = [];
 		var cities;
 		
-		$.get("./include/connect_db.php", function(data){
+		$.get("./include/fetch_recommendation.php", function(data){
 			getAllCities(data);					
 			analyze();			
 		});
