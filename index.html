@@ -73,11 +73,9 @@
 				    <div class="chart">temperature</div>					
 					<div class="chart">PM</div>
 					
-					<!-- Ankur, please add mock up bottom chart here -->
-					<div class="chart">Word Cloud</div>
-					
-					<!-- reserved, can be deleted if no use -->
-					<div class="chart">?</div>					
+					<!-- reserved, can be deleted if no use -->					
+					<div class="chart">?</div>										
+					<div class="chart" id="divWordCloud"></div>
 					
 				</div>
 				
@@ -106,6 +104,10 @@
 			$("#selectDensity").selectable();						
 			$("#selectCategory").zInput();							
 		});  													
+		
+		
+		
+		
 		
 				
 	</script>
@@ -255,6 +257,21 @@
 	</script>		
 	
 	<script src="./js/dataMap.js"></script>			
+	
+	<script> 
+		$(document).on("click",".datamaps-bubble", function () {			
+			document.getElementById("divWordCloud").innerHTML = "";
+			var info = $(this).attr('data-info'); // or var clickedBtnID = this.id
+			json = JSON.parse(info);			
+			var elem = document.createElement("img");
+			elem.src = "wordcloud/" + json["name"].toLowerCase() + ".png";								
+			elem.style.width = '100%';			
+			elem.style.height = '100%';	
+			document.getElementById("divWordCloud").appendChild(elem);						
+		});
+	</script>
+	
+	
 			
 	
 </body>
