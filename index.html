@@ -10,12 +10,12 @@
 			background-color: #eee;
 			color: #444;
 			cursor: pointer;
-			padding: 8px;
+			padding: 5px;
 			width: 100%;
 			border: none;
 			text-align: left;
 			outline: none;
-			font-size: 15px;
+			font-size: 13px;
 			transition: 0.4s;
 		}
 
@@ -309,14 +309,23 @@
 		// testing method: print text to right section
 		function addAccordions(){
 			document.getElementById('divRight').innerHTML = '';
-			for (i = 0; i < 10; i++) {
+			for (i = 0; i < 15; i++) {
 				document.getElementById('divRight').innerHTML += //cities[i].city + '<br>';
-						"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick='accrdClick(this.id)'>"+cities[i].city+", "+cities[i].country+"</button>\n" +
+						"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick='accrdClick(i)'>"+"#"+(i+1).toString()+" " +cities[i].city+", "+cities[i].country+"</button>\n" +
 						"<div class=\"panel\" id=pnl_"+i.toString()+">\n" +
 						"</div>";
 
 			}
 		}
+
+		function findAccordion(name){
+            for (i = 0; i < cities.length; i++){
+                if(cities[i].city == name){
+                    return "accrd_"+i.toString();
+                }
+            }
+		    return -1;
+        }
 
 		function accrdClick(id) {
 			var panels = document.getElementsByClassName('panel');
@@ -605,6 +614,9 @@
 			elem.style.width = '100%';
 			elem.style.height = '100%';
 			document.getElementById("divWordCloud").appendChild(elem);
+
+			index = findAccordion(json["name"]);
+            accrdClick(index);
 
 			_aqiFeed({  city: json["name"].toLowerCase()   ,  lang:"en",  callback:function(aqi){
 								$("#my-container").html(aqi.details);
