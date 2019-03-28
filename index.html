@@ -5,9 +5,72 @@
 	<link rel="stylesheet" href="./css/style.css">
 	<link rel="stylesheet" href="./css/jquery-ui.css">	
 	<link rel="stylesheet" type="text/css" href="./css/zInput_default_stylesheet.css">
+	<style>
+		.accordion {
+			background-color: #eee;
+			color: #444;
+			cursor: pointer;
+			padding: 8px;
+			width: 100%;
+			border: none;
+			text-align: left;
+			outline: none;
+			font-size: 15px;
+			transition: 0.4s;
+		}
+
+		.active, .accordion:hover {
+			background-color: #ccc;
+		}
+
+		.panel {
+			padding: 0 8px;
+			display: none;
+			background-color: white;
+			overflow: hidden;
+		}
+		body {
+			font-family: "Arial", sans-serif;
+		}
+
+		.bar {
+			fill: #636363;
+		}
+
+		.axis {
+			font-size: 11px;
+			color: #636363;
+		}
+		.path2 {
+			stroke: #ffa500;
+			stroke-width: 2;
+			fill: none;
+		}
+		.axis path,
+		.axis line {
+			fill: none;
+			display: none;
+		}
+		.axisline2 {
+			fill: none;
+			stroke: grey;
+			stroke-width: 1;
+			shape-rendering: crispEdges;
+		}
+
+		.label {
+			font-size: 11px;
+
+		}
+		.container {
+			width: 1000px;
+			display: grid;
+			grid-template-columns: 4fr 2fr; /* fraction*/
+		}
+	</style>
 </head>
 <body>
-	<script src="./js/import/d3.v3.min.js"></script> 
+	<script src="./js/import/d3.v3.min.js"></script>
 	<script src="./js/import/topojson.v1.min.js"></script>  
 	<script src="./js/import/datamaps.world.min.js?v=1"></script>
 	<script src="./js/import/jquery-1.12.4.js"></script>
@@ -81,12 +144,12 @@
 												fill: brown;
 												}
 									</style>
-						</div>					
+						</div>
 					<div class="chart">PM</div>
 					
 					<!-- reserved, can be deleted if no use -->					
-		
-					<div  class="chart" id='my-container'></div>								
+
+					<div  class="chart" id='my-container'></div>
 					<div class="chart" id="divWordCloud"></div>
 					
 				</div>
@@ -102,95 +165,81 @@
 			<footer>&copy; Copyright 2019 Trip Analyzer</footer>
 		</div>
 	<div>
+	<script src="./js/userInput.js"></script>
+	<script>
 
-	
-	<script src="./js/userInput.js"></script>	      
-		  	 
-	<script>		
-	
-		
-	
-		$( function() {			
+		$( function() {
 			// initialize
 			$("#selectBudget").selectable();
-			$("#selectDensity").selectable();						
-			$("#selectCategory").zInput();							
-		});  													
-		
-		
-		
-		
-		
-				
+			$("#selectDensity").selectable();
+			$("#selectCategory").zInput();
+		});
 	</script>
-	
-	
-	
-	<script> 
-		
-		// configurable constant weighting 
+	<script>
+
+		// configurable constant weighting
 		// contains the weights of matching on different aspects
 		// eg, matching user's budget input, score 10
 		// matching user's density input, score 10
 		// matching user's category preference, each poi of a city would score 0.1
 		var weights = {budget: 30, density: 30, per_poi: 0.1};
-		
+
 		var bubbleArray = [];
 		var cities;
-		
+
 		$.get("./include/fetch_recommendation.php", function(data){
-			getAllCities(data);					
-			analyze();			
+			getAllCities(data);
+			analyze();
 		});
 
 		// main method to analyze based on user input / default setting if user input isn't present
 		function analyze(){
-												
+
 			// reset score
 			resetScore();
 
 			// recommendation system
-			scoreBudget(document.getElementById("budget").value);						// budget matching						
-			scoreDensity(document.getElementById("density").value);						// density matching			
+			scoreBudget(document.getElementById("budget").value);						// budget matching
+			scoreDensity(document.getElementById("density").value);						// density matching
 			scoreCategory();
-						
+
 			// todo: add more filtering steps here
-			// eg, reddit sentiment, to be added by Ankur 
-			// eg, budget your trip, to be added by SiOnn			
-			// --- end of recommendation system ---						
-			
-			sortByScore();					
-			generateTop20Ranking();	
+			// eg, reddit sentiment, to be added by Ankur
+			// eg, budget your trip, to be added by SiOnn
+			// --- end of recommendation system ---
+
+			sortByScore();
+			generateTop20Ranking();
 			console.log(cities); 	// testing console output
-			
+
 			addAccordions();
-			addBubbles();			
-			
-		}			
-		
+			addBubbles();
+
+		}
+
 		// fetch all data from database
 		function getAllCities(data)
 		{
 			cities  = JSON.parse(data);
 			// default score at 0
-			for(i=0; i<cities.length; i++){				
-				cities[i]["score"] = 0;	
-				cities[i].rank = parseInt(cities[i].rank);		// type conversion	
-				cities[i].lat = parseFloat(cities[i].lat);		// type conversion	
-				cities[i].lng = parseFloat(cities[i].lng);		// type conversion	
-			}						
-		}		
-		
-		function resetScore(){
-			for(i=0; i<cities.length; i++){				
-				cities[i]["score"] = 0;				
+			for(i=0; i<cities.length; i++){
+				cities[i]["score"] = 0;
+				cities[i].rank = parseInt(cities[i].rank);		// type conversion
+				cities[i].lat = parseFloat(cities[i].lat);		// type conversion
+				cities[i].lng = parseFloat(cities[i].lng);		// type conversion
 			}
 		}
-		
+
+		function resetScore(){
+			for(i=0; i<cities.length; i++){
+				cities[i]["score"] = 0;
+			}
+		}
+
 		// calculate score based on user input budget
 		function scoreBudget(budget){
 			if (budget == "") return;
-			for(i=0; i<cities.length; i++){							
+			for(i=0; i<cities.length; i++){
 				switch(budget) {
 				  case "low":
 					if (cities[i].receipts_rank == 1 || cities[i].receipts_rank == 2 || cities[i].receipts_rank == 0)		cities[i].score += weights.budget;
@@ -199,35 +248,35 @@
 					if (cities[i].receipts_rank == 2 || cities[i].receipts_rank == 3 || cities[i].receipts_rank == 0)		cities[i].score += weights.budget;
 					continue;
 				  case "high":
-					if (cities[i].receipts_rank == 3 || cities[i].receipts_rank == 4 || cities[i].receipts_rank == 0)		cities[i].score += weights.budget;										
+					if (cities[i].receipts_rank == 3 || cities[i].receipts_rank == 4 || cities[i].receipts_rank == 0)		cities[i].score += weights.budget;
 					continue;
-				}							
-			}							
+				}
+			}
 		}
-		
+
 		// calculate score based on user input density
 		function scoreDensity(density){
 			if (density == "") return;
-			for(i=0; i<cities.length; i++){							
+			for(i=0; i<cities.length; i++){
 				switch(density) {
 				  case "low":
-					if (cities[i].arrivals_rank == 1 || cities[i].arrivals_rank == 2 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;									  				
+					if (cities[i].arrivals_rank == 1 || cities[i].arrivals_rank == 2 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;
 					continue;
 				  case "mid":
-					if (cities[i].arrivals_rank == 2 || cities[i].arrivals_rank == 3 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;										
+					if (cities[i].arrivals_rank == 2 || cities[i].arrivals_rank == 3 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;
 					continue;
 				  case "high":
-					if (cities[i].arrivals_rank == 3 || cities[i].arrivals_rank == 4 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;										
+					if (cities[i].arrivals_rank == 3 || cities[i].arrivals_rank == 4 || cities[i].arrivals_rank == 0)		cities[i].score += weights.density;
 					continue;
-				}							
-			}							
-		}		
-		
+				}
+			}
+		}
+
 		// calculate score based on user input selected category
-		function scoreCategory(){			
-			for(i=0; i<cities.length; i++){									
+		function scoreCategory(){
+			for(i=0; i<cities.length; i++){
 				if ($('#chkDiscovering').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].discovering * weights.per_poi;
-				if ($('#chkEating').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].eating * weights.per_poi;				
+				if ($('#chkEating').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].eating * weights.per_poi;
 				if ($('#chkNightlife').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].nightlife * weights.per_poi;
 				if ($('#chkOutdoors').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].hiking * weights.per_poi;
 				if ($('#chkFamily').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].family * weights.per_poi;
@@ -235,147 +284,330 @@
 				if ($('#chkShopping').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].shopping * weights.per_poi;
 				if ($('#chkSightseeing').parent().parent().parent().hasClass('zSelected'))	cities[i].score += cities[i].sightseeing * weights.per_poi;
 				if ($('#chkSports').parent().parent().parent().hasClass('zSelected'))		cities[i].score += cities[i].sports * weights.per_poi;
-			}								
-		}				
-		
+			}
+		}
+
 		// push sorted cities into bubbleArray for UI
-		function generateTop20Ranking(){						
+		function generateTop20Ranking(){
 			for (i = 0; i < 20; i++){
 				var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 50-i*2, fillKey: 'colorRank'+i};
-				bubbleArray.push(bubble);								
-			};									
+				bubbleArray.push(bubble);
+			};
 		}
-		
+
 		// sort cities by score then default rank from top 100
-		function sortByScore(){			
-			cities.sort(function(a,b){				
+		function sortByScore(){
+			cities.sort(function(a,b){
 				if (a.score > b.score)		{	return -1;	}
 				else if (a.score < b.score)	{	return 1;	}
 				else {
 					if (a.rank < b.rank)		{	return -1;	}
 					else if (a.rank > b.rank)	{	return 1;	}
-				}													
-			});						
-		}					
-		
-		// testing method: print text to right section 
-		function addAccordions(){		
+				}
+			});
+		}
+
+		// testing method: print text to right section
+		function addAccordions(){
 			document.getElementById('divRight').innerHTML = '';
-			for (i = 0; i < 20; i++) {
-				document.getElementById('divRight').innerHTML += cities[i].city + '<br/>';						
+			for (i = 0; i < 10; i++) {
+				document.getElementById('divRight').innerHTML += //cities[i].city + '<br>';
+						"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick='accrdClick(this.id)'>"+cities[i].city+", "+cities[i].country+"</button>\n" +
+						"<div class=\"panel\" id=pnl_"+i.toString()+">\n" +
+						"</div>";
+
 			}
 		}
-		
-	</script>		
 
-	<!----  add by Brian-->
-	<!---   script language="JavaScript" type="text/javascript" src="js/jquery-1.12.4.js"></script> -->
-	<script  type="text/javascript"  charset="utf-8">  
-		(function(w,d,t,f){  w[f]=w[f]||function(c,k,n){s=w[f],k=s['k']=(s['k']||(k?('&k='+k):''));s['c']=  
-		c=(c  instanceof  Array)?c:[c];s['n']=n=n||0;L=d.createElement(t),e=d.getElementsByTagName(t)[0];  
-		L.async=1;L.src='http://feed.aqicn.org/feed/'+(c[n].city)+'/'+(c[n].lang||'')+'/feed.v1.js?n='+n+k;  
-		e.parentNode.insertBefore(L,e);  };  })(  window,document,'script','_aqiFeed'  );    
-</script>
-<script>
-function createbar(country){
+		function accrdClick(id) {
+			var acc = document.getElementById(id);
+			var index = id.split("_");
 
-	var svg = d3.select("svg"),
-	margin = {
-		top: 50,
-		right: 20,
-		bottom: 30,
-		left: 50
-	},
-	width = +svg.attr("width") - margin.left - margin.right,
-	height = +svg.attr("height") - margin.top - margin.bottom,
-	g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			acc.classList.toggle("active");
+			var panel = acc.nextElementSibling;
+			if (panel.style.display === "block") {
+				panel.style.display = "none";
+			} else {
+				panel.style.display = "block";
+			}
+			d3.select("#pnl_"+index[1].toString()).selectAll("*").remove();
+			numOfPOI(index[1]);
 
-	var parseTime = d3.timeParse("%d-%b-%y");
+		}
 
-	var x = d3.scaleBand()
-		.rangeRound([0, width])
-		.padding(0.1);
+		function numOfPOI(index){
 
-	var y = d3.scaleLinear()
-		.rangeRound([height, 0]);
+			console.log(cities[index]);
+			var data=[];
+			data.push({score: Number(cities[index]["discovering"]), type: "Discovering"});
+			data.push({score: Number(cities[index]["eating"]), type: "Eating"});
+			data.push({score: Number(cities[index]["family"]), type: "Family"});
+			data.push({score: Number(cities[index]["hiking"]), type: "Hiking"});
+			data.push({score: Number(cities[index]["nightlife"]), type: "Nightlife"});
+			data.push({score: Number(cities[index]["relaxing"]), type: "Relaxing"});
+			data.push({score: Number(cities[index]["shopping"]), type: "Shopping"});
+			data.push({score: Number(cities[index]["sightseeing"]), type: "Sightseeing"});
+			data.push({score: Number(cities[index]["sports"]), type: "Sports"});
 
-	/*var country='CAN' */
-	d3.csv("world_temp.csv").then(function (data) {
-		var mintemp = d3.min(data, function (d) {
-					return +d[country]});
-		var mintemp = (mintemp > 0) ? 0 : mintemp - 2;
-		x.domain(data.map(function (d) {
-				return d.countrycode;
-			}));
-		y.domain([	mintemp , 
-					d3.max(data, function (d) {
-					return +d[country];})
-				]);
+			data = data.sort(function (a, b) {
+				return d3.descending(a.score, b.score);
+			})
+			console.log(data);
+			dataRevised = data.slice(0, 5);
+			dataRevised = dataRevised.sort(function (a, b) {
+				return d3.ascending(a.score, b.score);
+			})
 
-		g.append("g")
-		.attr("transform", "translate(0," + height + ")")
-		.call(d3.axisBottom(x))
+			console.log(dataRevised);
+			//set up svg using margin conventions - we'll need plenty of room on the left for labels
+			var margin = { top: 25,right: 0,bottom: 15,left: 60};
+			var width = 250 - margin.left - margin.right,
+					height = 150 - margin.top - margin.bottom;
 
-		g.append("g")
-		.call(d3.axisLeft(y))
-		.append("text")
-		.attr("fill", "#000")
-		.attr("transform", "rotate(-90)")
-		.attr("y", 6)
-		.attr("dy", "0.71em")
-		.attr("text-anchor", "end")
-		.text("Temperature");
+			var svg = d3.select("#pnl_"+index.toString()).append("svg")
+					.attr("width", width + margin.left + margin.right)
+					.attr("height", height + margin.top + margin.bottom)
+					.append("g")
+					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		g.append("g")
-		.append("text")
-		.attr("x",function(d){return (width / 2) + margin.left;})
-		.attr("y", -10)
-		.attr("text-anchor", "end")
-		.text("Temperature of " + country);
+			var x = d3.scale.linear()
+					.range([0, width])
+					.domain([0, d3.max(dataRevised, function (d) {
+						return d.score;
+					})]);
 
-		g.selectAll(".bar")
-		.data(data)
-		.enter().append("rect")
-		.attr("class", "bar")
-		.attr("x", function (d) {
-			return x(d.countrycode);
-		})
-		.attr("y", function (d) {
-			return y(Number(d[country]));
-		})
-		.attr("width", x.bandwidth())
-		.attr("height", function (d) {
-			return height - y(Number(d[country]));
-		});
-	});
-}
-</script>
+			var y = d3.scale.ordinal()
+					.rangeRoundBands([height, 0])
+					//.padding(0.2)
+					.domain(dataRevised.map(function (d) {
+						return d.type;
+					}));
 
+			//make y axis to show bar country names
+			var yAxis = d3.svg.axis()
+					.scale(y)
+					.orient("left")
+					.tickSize(0);
 
-	<script src="./js/dataMap.js"></script>			
-	
-	<script> 
-		$(document).on("click",".datamaps-bubble", function () {			
+			var gy = svg.append("g")
+					.attr("class", "y axis")
+					.call(yAxis);
+
+			svg.append("text")
+					.attr("transform", "translate(" + 0 + " ," + 0 + ")")
+					.style("text-anchor", "middle")
+					.text("Attraction score");
+
+			var bars = svg.selectAll(".bar")
+					.data(dataRevised)
+					.enter()
+					.append("g");
+			//append rects
+			bars.append("rect")
+					.attr("class", "bar")
+					.attr("y", function (d) {
+						return y(d.type)+5;
+					})
+					.attr("x", 0)
+					.attr("width", function (d) {
+						return x(d.score);
+					})
+					.attr("height", 18)
+					.on("mouseover",handleMouseOver)
+					.on("mouseout", handleMouseOut);
+
+			bars.append("text")
+					.attr("y",function (d) {
+						return y(d.type)+17.5;
+					})
+					.attr("x", function (d) {
+						return x(d.score)-23;
+					})
+					.text(function (d) { return d3.format(",")(d.score);})
+					.attr("class", "label")
+					.style("fill","#f0f0f0");
+		}
+
+		function createCountryDataSet(country){
+			var dataTemp = data.filter(function(d){ return d.country == country;})
+			var dataL=[];
+			var pop = Number(dataTemp[0].population_2012);
+			dataL.push({"year":2013, "popGrowth":(Number(dataTemp[0].growth.year_2013)/pop*100)});
+			pop= pop + Number(dataTemp[0].growth.year_2013);
+			dataL.push({"year":2014, "popGrowth":(Number(dataTemp[0].growth.year_2014)/pop*100)});
+			pop= pop + Number(dataTemp[0].growth.year_2014);
+			dataL.push({"year":2015, "popGrowth":(Number(dataTemp[0].growth.year_2015)/pop*100)});
+			pop= pop + Number(dataTemp[0].growth.year_2015);
+			dataL.push({"year":2016, "popGrowth":(Number(dataTemp[0].growth.year_2016)/pop*100)});
+			pop= pop + Number(dataTemp[0].growth.year_2016);
+			dataL.push({"year":2017, "popGrowth":(Number(dataTemp[0].growth.year_2017)/pop*100)});
+			return dataL;
+		}
+
+		function handleMouseOver(d) {
+			var bar = d3.select(this)
+					.style("fill", "orange");
+			//addLineChart(createCountryDataSet(d.country));
+		}
+		function handleMouseOut(d) {
+			//d3.select("#lineChart").selectAll("*").remove();
+			//d3.select("#svg2").selectAll("*").remove();
+			var bar = d3.select(this)
+					.style("fill", "#636363");
+		}
+
+		function addLineChart(dataL){
+			//Line Graph dataBangladesh
+			var	margin2 = {top: 60, right: 20, bottom: 30, left: 35},
+					width2 = 270 - margin.left - margin.right,
+					height2 = 220 - margin.top - margin.bottom;
+			// Adds the svg canvas
+			var svg2 = d3.select("#lineChart")
+					.attr("width", width2 + margin2.left + margin2.right)
+					.attr("height", height2 + margin2.top + margin2.bottom)
+					.append("g")
+					.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+			// Set the ranges
+			var	x2 =  d3.scaleLinear().domain([d3.min(dataL, function(d) { return d.year;}), d3.max(dataL, function(d) { return d.year; })]).range([0, width2]);
+			var	y2 = d3.scaleLinear().domain([d3.min(dataL, function(d) { return Number(d.popGrowth);}), d3.max(dataL, function(d) { return Number(d.popGrowth); })]).range([height2, 0]);
+
+			var valueLine = d3.line()
+					.x(function(d){return x2(d.year);})
+					.y(function(d){return y2(d.popGrowth);});
+
+			svg2.append("path")
+					.datum(dataL)
+					.attr("class", "path2")
+					.attr("d", valueLine);
+			// Add the X Axis
+			svg2.append("g")
+					.attr("class", "axisline2")
+					.attr("transform", "translate(0," + height2 + ")")
+					.call(d3.axisBottom(x2).ticks(5).tickFormat(d3.format("")) );
+
+			svg2.append("text")
+					.attr("class","label")
+					.attr("transform",
+							"translate(" + (width2-15) + " ," +
+							(height2+30) + ")")
+					.text("Year");
+			// Add the Y Axis
+			svg2.append("g")
+					.attr("class", "axisline2")
+					.call(d3.axisLeft(y2).ticks(5));
+
+			svg2.append("text")
+					.attr("class","label")
+					.attr("transform",
+							"translate(" + (-20) + " ," +(-10) + ")")
+					.text("Pct %");
+
+			d3.selectAll("svg2").exit().remove();
+
+		}
+	</script>
+		<!----  add by Brian-->
+		<!---   script language="JavaScript" type="text/javascript" src="js/jquery-1.12.4.js"></script> -->
+		<script  type="text/javascript"  charset="utf-8">
+			(function(w,d,t,f){  w[f]=w[f]||function(c,k,n){s=w[f],k=s['k']=(s['k']||(k?('&k='+k):''));s['c']=
+					c=(c  instanceof  Array)?c:[c];s['n']=n=n||0;L=d.createElement(t),e=d.getElementsByTagName(t)[0];
+				L.async=1;L.src='http://feed.aqicn.org/feed/'+(c[n].city)+'/'+(c[n].lang||'')+'/feed.v1.js?n='+n+k;
+				e.parentNode.insertBefore(L,e);  };  })(  window,document,'script','_aqiFeed'  );
+		</script>
+		<script>
+			function createbar(country){
+
+				var svg = d3.select("svg"),
+						margin = {
+							top: 50,
+							right: 20,
+							bottom: 30,
+							left: 50
+						},
+						width = +svg.attr("width") - margin.left - margin.right,
+						height = +svg.attr("height") - margin.top - margin.bottom,
+						g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+				var parseTime = d3.timeParse("%d-%b-%y");
+
+				var x = d3.scaleBand()
+						.rangeRound([0, width])
+						.padding(0.1);
+
+				var y = d3.scaleLinear()
+						.rangeRound([height, 0]);
+
+				/*var country='CAN' */
+				d3.csv("world_temp.csv").then(function (data) {
+					var mintemp = d3.min(data, function (d) {
+						return +d[country]});
+					var mintemp = (mintemp > 0) ? 0 : mintemp - 2;
+					x.domain(data.map(function (d) {
+						return d.countrycode;
+					}));
+					y.domain([	mintemp ,
+						d3.max(data, function (d) {
+							return +d[country];})
+					]);
+
+					g.append("g")
+							.attr("transform", "translate(0," + height + ")")
+							.call(d3.axisBottom(x))
+
+					g.append("g")
+							.call(d3.axisLeft(y))
+							.append("text")
+							.attr("fill", "#000")
+							.attr("transform", "rotate(-90)")
+							.attr("y", 6)
+							.attr("dy", "0.71em")
+							.attr("text-anchor", "end")
+							.text("Temperature");
+
+					g.append("g")
+							.append("text")
+							.attr("x",function(d){return (width / 2) + margin.left;})
+							.attr("y", -10)
+							.attr("text-anchor", "end")
+							.text("Temperature of " + country);
+
+					g.selectAll(".bar")
+							.data(data)
+							.enter().append("rect")
+							.attr("class", "bar")
+							.attr("x", function (d) {
+								return x(d.countrycode);
+							})
+							.attr("y", function (d) {
+								return y(Number(d[country]));
+							})
+							.attr("width", x.bandwidth())
+							.attr("height", function (d) {
+								return height - y(Number(d[country]));
+							});
+				});
+			}
+		</script>
+
+	<script src="./js/dataMap.js"></script>
+	<script>
+		$(document).on("click",".datamaps-bubble", function () {
 			document.getElementById("divWordCloud").innerHTML = "";
 			var info = $(this).attr('data-info'); // or var clickedBtnID = this.id
-			json = JSON.parse(info);			
+			json = JSON.parse(info);
 			var elem = document.createElement("img");
-			elem.src = "wordcloud/" + json["name"].toLowerCase() + ".png";								
-			elem.style.width = '100%';			
-			elem.style.height = '100%';	
+			elem.src = "wordcloud/" + json["name"].toLowerCase() + ".png";
+			elem.style.width = '100%';
+			elem.style.height = '100%';
 			document.getElementById("divWordCloud").appendChild(elem);
-			
-			_aqiFeed({  city: json["name"].toLowerCase()   ,  lang:"en",  callback:function(aqi){  
-								$("#my-container").html(aqi.details);  
-							}  });  
+
+			_aqiFeed({  city: json["name"].toLowerCase()   ,  lang:"en",  callback:function(aqi){
+								$("#my-container").html(aqi.details);
+							}  });
 			createbar('CAN');
 		});
 	</script>
-	
 
 
-	
-			
-	
 </body>
 
