@@ -19,7 +19,7 @@
 			transition: 0.4s;
 		}
 
-		.active, .accordion:hover {
+		.accordion:hover {
 			background-color: #ccc;
 		}
 
@@ -87,7 +87,7 @@
 						<li class="ui-widget-content" id="budget-low">Low</li>
 						<li class="ui-widget-content" id="budget-mid">Mid</li>
 						<li class="ui-widget-content" id="budget-high">High</li>
-					</ol>
+					</ul>
 				</div>
 				
 				<div>
@@ -96,7 +96,7 @@
 						<li class="ui-widget-content" id="density-low">Low</li>
 						<li class="ui-widget-content" id="density-mid">Mid</li>
 						<li class="ui-widget-content" id="density-high">High</li>
-					</ol>
+					</ul>
 				</div>
 				
 				<div>
@@ -153,8 +153,7 @@
 					<div class="chart" id="divWordCloud"></div>
 					
 				</div>
-				
-				
+
 				<div id="divRight" class="main-div">
 				
 					<!-- Youjung, please add top 10 / 15 / 20 accordion here -->								
@@ -320,10 +319,16 @@
 		}
 
 		function accrdClick(id) {
+			var panels = document.getElementsByClassName('panel');
 			var acc = document.getElementById(id);
 			var index = id.split("_");
 
-			acc.classList.toggle("active");
+			for (i = 0; i < panels.length; i++) {
+				if(i!=index){
+					panels[i].style.display = "none";
+				}
+			}
+
 			var panel = acc.nextElementSibling;
 			if (panel.style.display === "block") {
 				panel.style.display = "none";
