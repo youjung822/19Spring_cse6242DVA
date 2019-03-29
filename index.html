@@ -10,16 +10,16 @@
 			background-color: #eee;
 			color: #444;
 			cursor: pointer;
-			padding: 5px;
+			padding: 8px;
 			width: 100%;
 			border: none;
 			text-align: left;
 			outline: none;
-			font-size: 13px;
+			font-size: 15px;
 			transition: 0.4s;
 		}
 
-		.accordion:hover {
+		.active, .accordion:hover {
 			background-color: #ccc;
 		}
 
@@ -87,7 +87,7 @@
 						<li class="ui-widget-content" id="budget-low">Low</li>
 						<li class="ui-widget-content" id="budget-mid">Mid</li>
 						<li class="ui-widget-content" id="budget-high">High</li>
-					</ul>
+					</ol>
 				</div>
 				
 				<div>
@@ -96,7 +96,7 @@
 						<li class="ui-widget-content" id="density-low">Low</li>
 						<li class="ui-widget-content" id="density-mid">Mid</li>
 						<li class="ui-widget-content" id="density-high">High</li>
-					</ul>
+					</ol>
 				</div>
 				
 				<div>
@@ -153,7 +153,8 @@
 					<div class="chart" id="divWordCloud"></div>
 					
 				</div>
-
+				
+				
 				<div id="divRight" class="main-div">
 				
 					<!-- Youjung, please add top 10 / 15 / 20 accordion here -->								
@@ -309,35 +310,20 @@
 		// testing method: print text to right section
 		function addAccordions(){
 			document.getElementById('divRight').innerHTML = '';
-			for (i = 0; i < 15; i++) {
+			for (i = 0; i < 10; i++) {
 				document.getElementById('divRight').innerHTML += //cities[i].city + '<br>';
-						"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick='accrdClick(i)'>"+"#"+(i+1).toString()+" " +cities[i].city+", "+cities[i].country+"</button>\n" +
+						"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick='accrdClick(this.id)'>"+cities[i].city+", "+cities[i].country+"</button>\n" +
 						"<div class=\"panel\" id=pnl_"+i.toString()+">\n" +
 						"</div>";
 
 			}
 		}
 
-		function findAccordion(name){
-            for (i = 0; i < cities.length; i++){
-                if(cities[i].city == name){
-                    return "accrd_"+i.toString();
-                }
-            }
-		    return -1;
-        }
-
 		function accrdClick(id) {
-			var panels = document.getElementsByClassName('panel');
 			var acc = document.getElementById(id);
 			var index = id.split("_");
 
-			for (i = 0; i < panels.length; i++) {
-				if(i!=index){
-					panels[i].style.display = "none";
-				}
-			}
-
+			acc.classList.toggle("active");
 			var panel = acc.nextElementSibling;
 			if (panel.style.display === "block") {
 				panel.style.display = "none";
@@ -528,80 +514,93 @@
 				L.async=1;L.src='http://feed.aqicn.org/feed/'+(c[n].city)+'/'+(c[n].lang||'')+'/feed.v1.js?n='+n+k;
 				e.parentNode.insertBefore(L,e);  };  })(  window,document,'script','_aqiFeed'  );
 		</script>
-		<script>
-			function createbar(country){
+<script>
 
-				var svg = d3.select("svg"),
-						margin = {
-							top: 50,
-							right: 20,
-							bottom: 30,
-							left: 50
-						},
-						width = +svg.attr("width") - margin.left - margin.right,
-						height = +svg.attr("height") - margin.top - margin.bottom,
-						g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    function createbar(country){
 
-				var parseTime = d3.timeParse("%d-%b-%y");
 
-				var x = d3.scaleBand()
-						.rangeRound([0, width])
-						.padding(0.1);
+        ///////////////////////
+        // Parse the Data
+        d3.csv("world_temp.csv", function(data) {
 
-				var y = d3.scaleLinear()
-						.rangeRound([height, 0]);
+        ///////////////////////
+        // Chart Size Setup
+        var margin = { top: 60, right: 0, bottom: 30, left: 40 };
 
-				/*var country='CAN' */
-				d3.csv("world_temp.csv").then(function (data) {
-					var mintemp = d3.min(data, function (d) {
-						return +d[country]});
-					var mintemp = (mintemp > 0) ? 0 : mintemp - 2;
-					x.domain(data.map(function (d) {
-						return d.countrycode;
-					}));
-					y.domain([	mintemp ,
-						d3.max(data, function (d) {
-							return +d[country];})
-					]);
+        var width = 350 - margin.left - margin.right;
+        var height = 250 - margin.top - margin.bottom;
 
-					g.append("g")
-							.attr("transform", "translate(0," + height + ")")
-							.call(d3.axisBottom(x))
+        var chart = d3.select("#chart2")
+            .attr("width", 960)
+            .attr("height", 500)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-					g.append("g")
-							.call(d3.axisLeft(y))
-							.append("text")
-							.attr("fill", "#000")
-							.attr("transform", "rotate(-90)")
-							.attr("y", 6)
-							.attr("dy", "0.71em")
-							.attr("text-anchor", "end")
-							.text("Temperature");
+        ///////////////////////
+        // Scales
+        var x = d3.scale.ordinal()
+            .domain(data.map(function(d) { return d.countrycode; }))
+            .rangeRoundBands([0, width], .1);
 
-					g.append("g")
-							.append("text")
-							.attr("x",function(d){return (width / 2) + margin.left;})
-							.attr("y", -10)
-							.attr("text-anchor", "end")
-							.text("Temperature of " + country);
+            var mintemp = d3.min(data, function (d) {
+                                return +d[country]});
+            var mintemp = (mintemp > 0) ? 0 : mintemp - 2;      
+        console.log(mintemp);
+        var y = d3.scale.linear()
+            .domain([mintemp, d3.max(data, function(d) { return +d[country]; }) * 1.1])
+            .range([height, 0]);
 
-					g.selectAll(".bar")
-							.data(data)
-							.enter().append("rect")
-							.attr("class", "bar")
-							.attr("x", function (d) {
-								return x(d.countrycode);
-							})
-							.attr("y", function (d) {
-								return y(Number(d[country]));
-							})
-							.attr("width", x.bandwidth())
-							.attr("height", function (d) {
-								return height - y(Number(d[country]));
-							});
-				});
-			}
-		</script>
+        ///////////////////////
+        // Axis
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left");
+
+        chart.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        chart.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+        ///////////////////////
+        // Title
+        chart.append("text")
+            .text("Temperature of " + country)
+            .attr("text-anchor", "middle")
+            .attr("class", "graph-title")
+            .attr("y", -40)
+            .attr("x", width / 2.0);
+
+        ///////////////////////
+        // Bars
+        var bar = chart.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.countrycode); })
+            .attr("y", height)
+            .attr("width", x.rangeBand())
+            .attr("height", 0);
+
+        bar.transition()
+            .duration(1500)
+            .ease("elastic")
+            .attr("y", function(d) { return y(d[country]); })
+            .attr("height", function(d) { return height - y(d[country]); })
+               
+
+        });
+    }
+
+    createbar('FRA');
+	</script>
 
 	<script src="./js/dataMap.js"></script>
 	<script>
@@ -615,13 +614,10 @@
 			elem.style.height = '100%';
 			document.getElementById("divWordCloud").appendChild(elem);
 
-			index = findAccordion(json["name"]);
-            accrdClick(index);
-
 			_aqiFeed({  city: json["name"].toLowerCase()   ,  lang:"en",  callback:function(aqi){
 								$("#my-container").html(aqi.details);
 							}  });
-			createbar('CAN');
+			createbar('FRA');
 		});
 	</script>
 
