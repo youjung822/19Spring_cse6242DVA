@@ -46,6 +46,11 @@
 			stroke-width: 2;
 			fill: none;
 		}
+		path { 
+			stroke: steelblue;
+			stroke-width: 2;
+			fill: none;
+		}
 		.axis path,
 		.axis line {
 			fill: none;
@@ -133,9 +138,9 @@
 				<div id="divBottom" class="main-div">
 				
 					<!-- Brian, please add mock up bottom chart here -->
-				    <div class="chart">
-								<svg width="300" height="200"></svg>
-									<style>
+						<div class="chart">			
+							<svg id="chart"> </svg>	
+							<style>
 									.bar {
 												fill: rgb(95, 145, 187);
 												}
@@ -143,9 +148,11 @@
 												.bar:hover {
 												fill: brown;
 												}
-									</style>
+							</style>
 						</div>
-					<div class="chart">PM</div>
+					<div class="chart">
+							<svg id="chart2"> </svg>	
+					</div>
 					
 					<!-- reserved, can be deleted if no use -->					
 
@@ -514,6 +521,80 @@
 				L.async=1;L.src='http://feed.aqicn.org/feed/'+(c[n].city)+'/'+(c[n].lang||'')+'/feed.v1.js?n='+n+k;
 				e.parentNode.insertBefore(L,e);  };  })(  window,document,'script','_aqiFeed'  );
 		</script>
+
+<script>
+    function createplot(country){
+
+        // Set the dimensions of the canvas / graph
+        var	margin = {top: 30, right: 20, bottom: 30, left: 50},
+            width = 350 - margin.left - margin.right,
+            height = 250 - margin.top - margin.bottom;
+        
+        
+        // Set the ranges
+        var x = d3.scale.ordinal()
+                    .rangeRoundBands([0, width], .1);
+        var	y = d3.scale.linear().range([height, 0]);
+        
+        // Define the axes
+        var xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("bottom");
+        
+        var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient("left");
+        
+        // Define the line
+        var	valueline = d3.svg.line()
+            .x(function(d) { return x(d.countrycode); })
+            .y(function(d) { return y(d[country]); });
+            
+        // Adds the svg canvas
+        var	svg = d3.select("#chart2")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // Get the data
+        d3.csv("world_rainfall.csv", function(error, data) {
+            // Scale the range of the data
+            x.domain(data.map(function (d) {
+                            return d.countrycode;
+                        }));
+            y.domain([	0 , 
+                                d3.max(data, function (d) {
+                                return +d[country];})
+                            ]);
+        
+            // Add the valueline path.
+            svg.append("path")	
+                .attr("class", "line")
+                .attr("d", valueline(data));
+                
+            svg.append("g")
+                    .append("text")
+                    .attr("x",function(d){return (width / 2) + margin.left;})
+                    .attr("y", -10)
+                    .attr("text-anchor", "end")
+                    .text("Precipitation of " + country);
+        
+            // Add the X Axis
+            svg.append("g")		
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+        
+            // Add the Y Axis
+            svg.append("g")		
+                .attr("class", "y axis")
+                .call(yAxis);
+        
+        });
+    }
+    createplot('FRA');    
+</script>
 <script>
 
     function createbar(country){
@@ -527,12 +608,12 @@
         // Chart Size Setup
         var margin = { top: 60, right: 0, bottom: 30, left: 40 };
 
-        var width = 350 - margin.left - margin.right;
+        var width = 250 - margin.left - margin.right;
         var height = 250 - margin.top - margin.bottom;
 
-        var chart = d3.select("#chart2")
-            .attr("width", 960)
-            .attr("height", 500)
+        var chart = d3.select("#chart")
+            .attr("width", "100%")
+            .attr("height", "100%")
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
