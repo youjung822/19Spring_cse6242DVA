@@ -522,168 +522,9 @@
 				e.parentNode.insertBefore(L,e);  };  })(  window,document,'script','_aqiFeed'  );
 		</script>
 
-<script>
-    function createplot(country){
-
-        // Set the dimensions of the canvas / graph
-        var	margin = {top: 30, right: 20, bottom: 30, left: 50},
-            width = 350 - margin.left - margin.right,
-            height = 250 - margin.top - margin.bottom;
-        
-        
-        // Set the ranges
-        var x = d3.scale.ordinal()
-                    .rangeRoundBands([0, width], .1);
-        var	y = d3.scale.linear().range([height, 0]);
-        
-        // Define the axes
-        var xAxis = d3.svg.axis()
-                    .scale(x)
-                    .orient("bottom");
-        
-        var yAxis = d3.svg.axis()
-                    .scale(y)
-                    .orient("left");
-        
-        // Define the line
-        var	valueline = d3.svg.line()
-            .x(function(d) { return x(d.countrycode); })
-            .y(function(d) { return y(d[country]); });
-            
-        // Adds the svg canvas
-        var	svg = d3.select("#chart2")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        // Get the data
-        d3.csv("world_rainfall.csv", function(error, data) {
-            // Scale the range of the data
-            x.domain(data.map(function (d) {
-                            return d.countrycode;
-                        }));
-            y.domain([	0 , 
-                                d3.max(data, function (d) {
-                                return +d[country];})
-                            ]);
-        
-            // Add the valueline path.
-            svg.append("path")	
-                .attr("class", "line")
-                .attr("d", valueline(data));
-                
-            svg.append("g")
-                    .append("text")
-                    .attr("x",function(d){return (width / 2) + margin.left;})
-                    .attr("y", -10)
-                    .attr("text-anchor", "end")
-                    .text("Precipitation of " + country);
-        
-            // Add the X Axis
-            svg.append("g")		
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
-        
-            // Add the Y Axis
-            svg.append("g")		
-                .attr("class", "y axis")
-                .call(yAxis);
-        
-        });
-    }
-    createplot('FRA');    
-</script>
-<script>
-
-    function createbar(country){
-
-
-        ///////////////////////
-        // Parse the Data
-        d3.csv("world_temp.csv", function(data) {
-
-        ///////////////////////
-        // Chart Size Setup
-        var margin = { top: 60, right: 0, bottom: 30, left: 40 };
-
-        var width = 250 - margin.left - margin.right;
-        var height = 250 - margin.top - margin.bottom;
-
-        var chart = d3.select("#chart")
-            .attr("width", "100%")
-            .attr("height", "100%")
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        ///////////////////////
-        // Scales
-        var x = d3.scale.ordinal()
-            .domain(data.map(function(d) { return d.countrycode; }))
-            .rangeRoundBands([0, width], .1);
-
-            var mintemp = d3.min(data, function (d) {
-                                return +d[country]});
-            var mintemp = (mintemp > 0) ? 0 : mintemp - 2;      
-        console.log(mintemp);
-        var y = d3.scale.linear()
-            .domain([mintemp, d3.max(data, function(d) { return +d[country]; }) * 1.1])
-            .range([height, 0]);
-
-        ///////////////////////
-        // Axis
-        var xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom");
-
-        var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left");
-
-        chart.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-
-        chart.append("g")
-            .attr("class", "y axis")
-            .call(yAxis);
-
-        ///////////////////////
-        // Title
-        chart.append("text")
-            .text("Temperature of " + country)
-            .attr("text-anchor", "middle")
-            .attr("class", "graph-title")
-            .attr("y", -40)
-            .attr("x", width / 2.0);
-
-        ///////////////////////
-        // Bars
-        var bar = chart.selectAll(".bar")
-            .data(data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return x(d.countrycode); })
-            .attr("y", height)
-            .attr("width", x.rangeBand())
-            .attr("height", 0);
-
-        bar.transition()
-            .duration(1500)
-            .ease("elastic")
-            .attr("y", function(d) { return y(d[country]); })
-            .attr("height", function(d) { return height - y(d[country]); })
-               
-
-        });
-    }
-
-    createbar('FRA');
-	</script>
 
 	<script src="./js/dataMap.js"></script>
+	<script>		var canvaswidth = document.getElementsByClassName('datamap')[0].attributes[0].value / 4 </script>
 	<script>
 		$(document).on("click",".datamaps-bubble", function () {
 			document.getElementById("divWordCloud").innerHTML = "";
@@ -696,12 +537,180 @@
 			document.getElementById("divWordCloud").appendChild(elem);
 
 			_aqiFeed({  city: json["name"].toLowerCase()   ,  lang:"en",  callback:function(aqi){
-								$("#my-container").html(aqi.details);
+								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>%cityname AQI:</small> <div style='font-size:88px;height:180px;padding-top:30px;'>%aqiv</div> %impact</div>"));
 							}  });
+		//	_aqiFeed({    
+  		//		display:"<div style='%style;max-width:180px;text-align:center;'><small>%cityname AQI:</small> <div style='font-size:88px;height:60px;padding-top:30px;'>%aqiv</div> %impact</div>",  
+  		//		container:"city-aqi-container-display",    
+  		//		city: json["name"].toLowerCase()
+		//	});  
+	
 			createbar('FRA');
 		});
 	</script>
 
+<script>
+
+
+			function createplot(country){
+		
+				// Set the dimensions of the canvas / graph
+				var	margin = {top: 30, right: 20, bottom: 30, left: 30},
+					width = canvaswidth - margin.left - margin.right,
+					height = 250 - margin.top - margin.bottom;
+				
+				
+				// Set the ranges
+				var x = d3.scale.ordinal()
+							.rangeRoundBands([0, width], .1);
+				var	y = d3.scale.linear().range([height, 0]);
+				
+				// Define the axes
+				var xAxis = d3.svg.axis()
+							.scale(x)
+							.orient("bottom");
+				
+				var yAxis = d3.svg.axis()
+							.scale(y)
+							.orient("left");
+				
+				// Define the line
+				var	valueline = d3.svg.line()
+					.x(function(d) { return x(d.countrycode); })
+					.y(function(d) { return y(d[country]); });
+					
+				// Adds the svg canvas
+				var	svg = d3.select("#chart2")
+						.attr("width", width + margin.left + margin.right)
+						.attr("height", height + margin.top + margin.bottom)
+					.append("g")
+						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+				// Get the data
+				d3.csv("world_rainfall.csv", function(error, data) {
+					// Scale the range of the data
+					x.domain(data.map(function (d) {
+									return d.countrycode;
+								}));
+					y.domain([	0 , 
+										d3.max(data, function (d) {
+										return +d[country];})
+									]);
+				
+					// Add the valueline path.
+					svg.append("path")	
+						.attr("class", "line")
+						.attr("d", valueline(data));
+						
+					svg.append("g")
+							.append("text")
+							.attr("x",function(d){return (width / 2) + margin.left;})
+							.attr("y", -10)
+							.attr("text-anchor", "end")
+							.text("Precipitation of " + country);
+				
+					// Add the X Axis
+					svg.append("g")		
+						.attr("class", "x axis")
+						.attr("transform", "translate(0," + height + ")")
+						.call(xAxis);
+				
+					// Add the Y Axis
+					svg.append("g")		
+						.attr("class", "y axis")
+						.call(yAxis);
+				
+				});
+			}
+			createplot('FRA');    
+		</script>
+		<script>
+		
+			function createbar(country){
+		
+		
+				///////////////////////
+				// Parse the Data
+				d3.csv("world_temp.csv", function(data) {
+		
+				///////////////////////
+				// Chart Size Setup
+				var margin = { top: 60, right: 0, bottom: 30, left: 30 };
+		
+				var width = canvaswidth - margin.left - margin.right;
+				var height = 250 - margin.top - margin.bottom;
+		
+				var chart = d3.select("#chart")
+					.attr("width", "100%")
+					.attr("height", "100%")
+					.append("g")
+					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+				///////////////////////
+				// Scales
+				var x = d3.scale.ordinal()
+					.domain(data.map(function(d) { return d.countrycode; }))
+					.rangeRoundBands([0, width], .1);
+		
+					var mintemp = d3.min(data, function (d) {
+										return +d[country]});
+					var mintemp = (mintemp > 0) ? 0 : mintemp - 2;      
+				console.log(mintemp);
+				var y = d3.scale.linear()
+					.domain([mintemp, d3.max(data, function(d) { return +d[country]; }) * 1.1])
+					.range([height, 0]);
+		
+				///////////////////////
+				// Axis
+				var xAxis = d3.svg.axis()
+					.scale(x)
+					.orient("bottom");
+		
+				var yAxis = d3.svg.axis()
+					.scale(y)
+					.orient("left");
+		
+				chart.append("g")
+					.attr("class", "x axis")
+					.attr("transform", "translate(0," + height + ")")
+					.call(xAxis);
+		
+				chart.append("g")
+					.attr("class", "y axis")
+					.call(yAxis);
+		
+				///////////////////////
+				// Title
+				chart.append("text")
+					.text("Temperature of " + country)
+					.attr("text-anchor", "middle")
+					.attr("class", "graph-title")
+					.attr("y", -40)
+					.attr("x", width / 2.0);
+		
+				///////////////////////
+				// Bars
+				var bar = chart.selectAll(".bar")
+					.data(data)
+					.enter().append("rect")
+					.attr("class", "bar")
+					.attr("x", function(d) { return x(d.countrycode); })
+					.attr("y", height)
+					.attr("width", x.rangeBand())
+					.attr("height", 0);
+		
+				bar.transition()
+					.duration(1500)
+					.ease("elastic")
+					.attr("y", function(d) { return y(d[country]); })
+					.attr("height", function(d) { return height - y(d[country]); })
+					   
+		
+				});
+			}
+		
+			createbar('FRA');
+			</script>
 
 </body>
 
