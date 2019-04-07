@@ -10,20 +10,24 @@
 			background-color: #eee;
 			color: #444;
 			cursor: pointer;
-			padding: 8px;
+			padding: 5px;
 			width: 100%;
 			border: none;
 			text-align: left;
 			outline: none;
-			font-size: 15px;
+			font-size: 13px;
 			transition: 0.4s;
 		}
-
-		.active, .accordion:hover {
+		.accordion:hover {
 			background-color: #ccc;
 		}
-
 		.panel {
+			padding: 0 8px;
+			display: none;
+			background-color: white;
+			overflow: hidden;
+		}
+		.panel2 {
 			padding: 0 8px;
 			display: none;
 			background-color: white;
@@ -32,11 +36,6 @@
 		body {
 			font-family: "Arial", sans-serif;
 		}
-
-		.bar {
-			fill: #636363;
-		}
-
 		.axis {
 			font-size: 11px;
 			color: #636363;
@@ -62,7 +61,6 @@
 			stroke-width: 1;
 			shape-rendering: crispEdges;
 		}
-
 		.label {
 			font-size: 11px;
 
@@ -71,6 +69,89 @@
 			width: 1000px;
 			display: grid;
 			grid-template-columns: 4fr 2fr; /* fraction*/
+		}
+		.mySlides {display: none}
+		img {vertical-align: middle;}
+		/* Slideshow container */
+		.slideshow-container {
+			max-width: 150px;
+			position: relative;
+			margin: auto;
+		}
+		/* Next & previous buttons */
+		.prev, .next {
+			cursor: pointer;
+			position: absolute;
+			top: 50%;
+			width: auto;
+			padding: 16px;
+			margin-top: -22px;
+			color: white;
+			font-weight: bold;
+			font-size: 18px;
+			transition: 0.6s ease;
+			border-radius: 0 3px 3px 0;
+			user-select: none;
+		}
+		/* Position the "next button" to the right */
+		.next {
+			right: 0;
+			border-radius: 3px 0 0 3px;
+		}
+		/* On hover, add a black background color with a little bit see-through */
+		.prev:hover, .next:hover {
+			background-color: rgba(0,0,0,0.8);
+		}
+		/* Caption text */
+		.text {
+			color: #f2f2f2;
+			font-size: 15px;
+			padding: 8px 12px;
+			position: absolute;
+			bottom: 8px;
+			width: 100%;
+			text-align: center;
+		}
+		/* Number text (1/3 etc) */
+		.numbertext {
+			color: #f2f2f2;
+			font-size: 12px;
+			padding: 8px 12px;
+			position: absolute;
+			top: 0;
+		}
+		/* The dots/bullets/indicators */
+		.dot {
+			cursor: pointer;
+			height: 15px;
+			width: 15px;
+			margin: 0 2px;
+			background-color: #bbb;
+			border-radius: 50%;
+			display: inline-block;
+			transition: background-color 0.6s ease;
+		}
+		.active, .dot:hover {
+			background-color: #717171;
+		}
+		/* Fading animation */
+		.fade {
+			-webkit-animation-name: fade;
+			-webkit-animation-duration: 1.5s;
+			animation-name: fade;
+			animation-duration: 1.5s;
+		}
+		@-webkit-keyframes fade {
+			from {opacity: .4}
+			to {opacity: 1}
+		}
+		@keyframes fade {
+			from {opacity: .4}
+			to {opacity: 1}
+		}
+		/* On smaller screens, decrease text size */
+		@media only screen and (max-width: 300px) {
+			.prev, .next,.text {font-size: 11px}
 		}
 	</style>
 </head>
@@ -160,15 +241,10 @@
 					<div class="chart" id="divWordCloud"></div>
 					
 				</div>
-				
-				
 				<div id="divRight" class="main-div">
-				
-					<!-- Youjung, please add top 10 / 15 / 20 accordion here -->								
-				
-				
+					<!-- Youjung, please add top 10 / 15 / 20 accordion here -->
 				</div>
-			</div>			
+			</div>
 			<footer>&copy; Copyright 2019 Trip Analyzer</footer>
 		</div>
 	<div>
@@ -317,34 +393,103 @@
 		// testing method: print text to right section
 		function addAccordions(){
 			document.getElementById('divRight').innerHTML = '';
-			for (i = 0; i < 10; i++) {
+			for (i = 0; i < 15; i++) {
 				document.getElementById('divRight').innerHTML += //cities[i].city + '<br>';
-						"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick='accrdClick(this.id)'>"+cities[i].city+", "+cities[i].country+"</button>\n" +
-						"<div class=\"panel\" id=pnl_"+i.toString()+">\n" +
-						"</div>";
+				"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick="+"accrdClick(accrd_"+i.toString()+".id)\;"+">"+"#"+(i+1).toString()+" " +cities[i].city+", "+cities[i].country+"</button>\n" +
+				"<div class=\"panel\" id=pnl_"+i.toString()+"></div>\n"+
+				"<div class=\"panel2\" id=pnl_2_"+i.toString()+">"+
+				"</div>" ;
 
 			}
+		}
+
+		function findAccordion(name){
+			for (i = 0; i < cities.length; i++){
+				if(cities[i].city == name){
+					return "accrd_"+i.toString();
+				}
+			}
+			return -1;
+		}
+
+		function findCountryISO(name){
+			for (i = 0; i < cities.length; i++){
+				if(cities[i].city == name){
+					return cities[i].country_iso;
+				}
+			}
+			return -1;
 		}
 
 		function accrdClick(id) {
+			var panels = document.getElementsByClassName('panel');
+			var panels2 = document.getElementsByClassName('panel2');
+			console.log(panels2);
+
 			var acc = document.getElementById(id);
 			var index = id.split("_");
 
-			acc.classList.toggle("active");
+			for (i = 0; i < panels.length; i++) {
+				if(i!=index[1]){
+					panels[i].style.display = "none";
+					panels2[i].style.display = "none";
+				}
+			}
 			var panel = acc.nextElementSibling;
+			var panel2 = panel.nextElementSibling;
+			console.log(panel);
 			if (panel.style.display === "block") {
 				panel.style.display = "none";
+				panel2.style.display = "none";
 			} else {
 				panel.style.display = "block";
+				panel2.style.display = "block";
 			}
+
 			d3.select("#pnl_"+index[1].toString()).selectAll("*").remove();
 			numOfPOI(index[1]);
+			//document.getElementById('pnl_2_'+index[1].toString()).innerHTML += createPOIDetail(index[1]);
+		}
 
+		function createPOIDetail(index){
+			var sliderHtml="";
+			for (i = 0; i < 5; i++) {
+				var newHtml =
+					"<div class=\"mySlides fade\" id=\"sld_"+index+"_"+i.toString() +"\">\n"+
+					"<img src=\"img_nature_wide.jpg\" style=\"width:100%\" id=\"img_"+index+"_"+ i.toString() +"\"></div>\n";
+
+				//	"<div class=\"text\" id=\"caption_"+index+"_"+ i.toString() +"\"> Caption "+i.toString() + "</div>\n";
+				sliderHtml += newHtml;
+			}
+			var dotHtml;
+			for (i = 0; i < 5; i++) {
+				dotHtml = dotHtml+ "<span class=\"dot\" id=\"dot_"+index+"_"+i.toString()+ "\" onclick=\"currentSlide("+i.toString()+")\"></span>\n" ;
+			}
+
+		return	"<div class=\"slideshow-container\">\n"+
+				sliderHtml+
+				"<a class=\"prev\" onclick=\"plusSlides(-1)\">&#10094;</a>\n"+
+				"<a class=\"next\" onclick=\"plusSlides(1)\">&#10095;</a>\n"+
+				//"</div>\n"+
+				"<div style=\"text-align:center\">\n"+dotHtml+"</div>\n";
+		}
+
+		function loadDetail(name) {
+			console.log("loadDetail:"+ name);
+			document.getElementById("divWordCloud").innerHTML = "";
+			var elem = document.createElement("img");
+			elem.src = "wordcloud/" + name.toLowerCase() + ".png";
+			elem.style.width = '100%';
+			elem.style.height = '100%';
+			document.getElementById("divWordCloud").appendChild(elem);
+
+			_aqiFeed({  city: name.toLowerCase(), lang:"en",callback:function(aqi){
+					$("#my-container").html(aqi.details);
+				}  });
+			createbar('FRA');
 		}
 
 		function numOfPOI(index){
-
-			console.log(cities[index]);
 			var data=[];
 			data.push({score: Number(cities[index]["discovering"]), type: "Discovering"});
 			data.push({score: Number(cities[index]["eating"]), type: "Eating"});
@@ -359,13 +504,10 @@
 			data = data.sort(function (a, b) {
 				return d3.descending(a.score, b.score);
 			})
-			console.log(data);
 			dataRevised = data.slice(0, 5);
 			dataRevised = dataRevised.sort(function (a, b) {
 				return d3.ascending(a.score, b.score);
 			})
-
-			console.log(dataRevised);
 			//set up svg using margin conventions - we'll need plenty of room on the left for labels
 			var margin = { top: 25,right: 0,bottom: 15,left: 60};
 			var width = 250 - margin.left - margin.right,
@@ -385,7 +527,6 @@
 
 			var y = d3.scale.ordinal()
 					.rangeRoundBands([height, 0])
-					//.padding(0.2)
 					.domain(dataRevised.map(function (d) {
 						return d.type;
 					}));
@@ -411,7 +552,7 @@
 					.append("g");
 			//append rects
 			bars.append("rect")
-					.attr("class", "bar")
+					.style("fill", "#636363")
 					.attr("y", function (d) {
 						return y(d.type)+5;
 					})
@@ -512,92 +653,120 @@
 			d3.selectAll("svg2").exit().remove();
 
 		}
+
+		//Slide function
+		var slideIndex = 1;
+		showSlides(slideIndex);
+
+		function plusSlides(n) {
+			showSlides(slideIndex += n);
+		}
+
+		function currentSlide(n) {
+			showSlides(slideIndex = n);
+		}
+
+		function showSlides(n) {
+			var i;
+			var slides = document.getElementsByClassName("mySlides");
+			var dots = document.getElementsByClassName("dot");
+			if (n > slides.length) {slideIndex = 1}
+			if (n < 1) {slideIndex = slides.length}
+			for (i = 0; i < slides.length; i++) {
+				slides[i].style.display = "none";
+			}
+			for (i = 0; i < dots.length; i++) {
+				dots[i].className = dots[i].className.replace(" active", "");
+			}
+			slides[slideIndex-1].style.display = "block";
+			dots[slideIndex-1].className += " active";
+		}
+
 	</script>
-		<!----  add by Brian-->
-		<!---   script language="JavaScript" type="text/javascript" src="js/jquery-1.12.4.js"></script> -->
-		<script  type="text/javascript"  charset="utf-8">
+	<!----  add by Brian-->
+	<!---   script language="JavaScript" type="text/javascript" src="js/jquery-1.12.4.js"></script> -->
+	<script  type="text/javascript"  charset="utf-8">
 			(function(w,d,t,f){  w[f]=w[f]||function(c,k,n){s=w[f],k=s['k']=(s['k']||(k?('&k='+k):''));s['c']=
 					c=(c  instanceof  Array)?c:[c];s['n']=n=n||0;L=d.createElement(t),e=d.getElementsByTagName(t)[0];
 				L.async=1;L.src='http://feed.aqicn.org/feed/'+(c[n].city)+'/'+(c[n].lang||'')+'/feed.v1.js?n='+n+k;
 				e.parentNode.insertBefore(L,e);  };  })(  window,document,'script','_aqiFeed'  );
 		</script>
 
-<script>
-    function createplot(country){
+	<script>
+		function createplot(country){
 
-        // Set the dimensions of the canvas / graph
-        var	margin = {top: 30, right: 20, bottom: 30, left: 50},
-            width = 350 - margin.left - margin.right,
-            height = 250 - margin.top - margin.bottom;
-        
-        
-        // Set the ranges
-        var x = d3.scale.ordinal()
-                    .rangeRoundBands([0, width], .1);
-        var	y = d3.scale.linear().range([height, 0]);
-        
-        // Define the axes
-        var xAxis = d3.svg.axis()
-                    .scale(x)
-                    .orient("bottom");
-        
-        var yAxis = d3.svg.axis()
-                    .scale(y)
-                    .orient("left");
-        
-        // Define the line
-        var	valueline = d3.svg.line()
-            .x(function(d) { return x(d.countrycode); })
-            .y(function(d) { return y(d[country]); });
-            
-        // Adds the svg canvas
-        var	svg = d3.select("#chart2")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			// Set the dimensions of the canvas / graph
+			var	margin = {top: 30, right: 20, bottom: 30, left: 50},
+				width = 350 - margin.left - margin.right,
+				height = 250 - margin.top - margin.bottom;
 
-        // Get the data
-        d3.csv("world_rainfall.csv", function(error, data) {
-            // Scale the range of the data
-            x.domain(data.map(function (d) {
-                            return d.countrycode;
-                        }));
-            y.domain([	0 , 
-                                d3.max(data, function (d) {
-                                return +d[country];})
-                            ]);
-        
-            // Add the valueline path.
-            svg.append("path")	
-                .attr("class", "line")
-                .attr("d", valueline(data));
-                
-            svg.append("g")
-                    .append("text")
-                    .attr("x",function(d){return (width / 2) + margin.left;})
-                    .attr("y", -10)
-                    .attr("text-anchor", "end")
-                    .text("Precipitation of " + country);
-        
-            // Add the X Axis
-            svg.append("g")		
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
-        
-            // Add the Y Axis
-            svg.append("g")		
-                .attr("class", "y axis")
-                .call(yAxis);
-        
-        });
-    }
-    createplot('FRA');    
-</script>
-<script>
 
-    function createbar(country){
+			// Set the ranges
+			var x = d3.scale.ordinal()
+						.rangeRoundBands([0, width], .1);
+			var	y = d3.scale.linear().range([height, 0]);
+
+			// Define the axes
+			var xAxis = d3.svg.axis()
+						.scale(x)
+						.orient("bottom");
+
+			var yAxis = d3.svg.axis()
+						.scale(y)
+						.orient("left");
+
+			// Define the line
+			var	valueline = d3.svg.line()
+				.x(function(d) { return x(d.countrycode); })
+				.y(function(d) { return y(d[country]); });
+
+			// Adds the svg canvas
+			var	svg = d3.select("#chart2")
+					.attr("width", width + margin.left + margin.right)
+					.attr("height", height + margin.top + margin.bottom)
+				.append("g")
+					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			// Get the data
+			d3.csv("world_rainfall.csv", function(error, data) {
+				// Scale the range of the data
+				x.domain(data.map(function (d) {
+								return d.countrycode;
+							}));
+				y.domain([	0 ,
+									d3.max(data, function (d) {
+									return +d[country];})
+								]);
+
+				// Add the valueline path.
+				svg.append("path")
+					.attr("class", "line")
+					.attr("d", valueline(data));
+
+				svg.append("g")
+						.append("text")
+						.attr("x",function(d){return (width / 2) + margin.left;})
+						.attr("y", -10)
+						.attr("text-anchor", "end")
+						.text("Precipitation of " + country);
+
+				// Add the X Axis
+				svg.append("g")
+					.attr("class", "x axis")
+					.attr("transform", "translate(0," + height + ")")
+					.call(xAxis);
+
+				// Add the Y Axis
+				svg.append("g")
+					.attr("class", "y axis")
+					.call(yAxis);
+
+			});
+		}
+		createplot('FRA');
+	</script>
+	<script>
+    	function createbar(country){
 
 
         ///////////////////////
@@ -679,13 +848,13 @@
 
         });
     }
-
-    createbar('FRA');
+    	createbar('FRA');
 	</script>
 
 	<script src="./js/dataMap.js"></script>
 	<script>
 		$(document).on("click",".datamaps-bubble", function () {
+
 			document.getElementById("divWordCloud").innerHTML = "";
 			var info = $(this).attr('data-info'); // or var clickedBtnID = this.id
 			json = JSON.parse(info);
@@ -694,6 +863,12 @@
 			elem.style.width = '100%';
 			elem.style.height = '100%';
 			document.getElementById("divWordCloud").appendChild(elem);
+			var countryIso  = findCountryISO(json["name"]);
+			console.log(countryIso);
+			//YJ Added to sync with bubble interaction --begin
+			index = findAccordion(json["name"]);
+			accrdClick(index);
+			//YJ Added to sync with bubble interaction --end
 
 			_aqiFeed({  city: json["name"].toLowerCase()   ,  lang:"en",  callback:function(aqi){
 								$("#my-container").html(aqi.details);
@@ -704,4 +879,4 @@
 
 
 </body>
-
+</html>
