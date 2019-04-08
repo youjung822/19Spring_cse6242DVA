@@ -219,8 +219,8 @@
 				<div id="divBottom" class="main-div">
 				
 					<!-- Brian, please add mock up bottom chart here -->
-						<div class="chart">			
-							<svg id="chart"> </svg>	
+						<div class="chart" id = "chart">			
+						
 							<style>
 									.bar {
 												fill: rgb(95, 145, 187);
@@ -231,8 +231,8 @@
 												}
 							</style>
 						</div>
-					<div class="chart">
-							<svg id="chart2"> </svg>	
+					<div class="chart" id="chart2">
+					
 					</div>
 					
 					<!-- reserved, can be deleted if no use -->					
@@ -373,7 +373,7 @@
 		// push sorted cities into bubbleArray for UI
 		function generateTop20Ranking(){
 			for (i = 0; i < 20; i++){
-				var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 50-i*2, fillKey: 'colorRank'+i};
+				var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 50-i*2, fillKey: 'colorRank'+i, country_iso: cities[i].country_iso};
 				bubbleArray.push(bubble);
 			};
 		}
@@ -692,167 +692,9 @@
 				e.parentNode.insertBefore(L,e);  };  })(  window,document,'script','_aqiFeed'  );
 		</script>
 
-<<<<<<< .merge_file_a50976
-=======
-	<script>
-		function createplot(country){
-
-			// Set the dimensions of the canvas / graph
-			var	margin = {top: 30, right: 20, bottom: 30, left: 50},
-				width = 350 - margin.left - margin.right,
-				height = 250 - margin.top - margin.bottom;
 
 
-			// Set the ranges
-			var x = d3.scale.ordinal()
-						.rangeRoundBands([0, width], .1);
-			var	y = d3.scale.linear().range([height, 0]);
 
-			// Define the axes
-			var xAxis = d3.svg.axis()
-						.scale(x)
-						.orient("bottom");
-
-			var yAxis = d3.svg.axis()
-						.scale(y)
-						.orient("left");
-
-			// Define the line
-			var	valueline = d3.svg.line()
-				.x(function(d) { return x(d.countrycode); })
-				.y(function(d) { return y(d[country]); });
-
-			// Adds the svg canvas
-			var	svg = d3.select("#chart2")
-					.attr("width", width + margin.left + margin.right)
-					.attr("height", height + margin.top + margin.bottom)
-				.append("g")
-					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-			// Get the data
-			d3.csv("world_rainfall.csv", function(error, data) {
-				// Scale the range of the data
-				x.domain(data.map(function (d) {
-								return d.countrycode;
-							}));
-				y.domain([	0 ,
-									d3.max(data, function (d) {
-									return +d[country];})
-								]);
-
-				// Add the valueline path.
-				svg.append("path")
-					.attr("class", "line")
-					.attr("d", valueline(data));
-
-				svg.append("g")
-						.append("text")
-						.attr("x",function(d){return (width / 2) + margin.left;})
-						.attr("y", -10)
-						.attr("text-anchor", "end")
-						.text("Precipitation of " + country);
-
-				// Add the X Axis
-				svg.append("g")
-					.attr("class", "x axis")
-					.attr("transform", "translate(0," + height + ")")
-					.call(xAxis);
-
-				// Add the Y Axis
-				svg.append("g")
-					.attr("class", "y axis")
-					.call(yAxis);
-
-			});
-		}
-		createplot('FRA');
-	</script>
-	<script>
-    	function createbar(country){
-
-
-        ///////////////////////
-        // Parse the Data
-        d3.csv("world_temp.csv", function(data) {
-
-        ///////////////////////
-        // Chart Size Setup
-        var margin = { top: 60, right: 0, bottom: 30, left: 40 };
-
-        var width = 250 - margin.left - margin.right;
-        var height = 250 - margin.top - margin.bottom;
-
-        var chart = d3.select("#chart")
-            .attr("width", "100%")
-            .attr("height", "100%")
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        ///////////////////////
-        // Scales
-        var x = d3.scale.ordinal()
-            .domain(data.map(function(d) { return d.countrycode; }))
-            .rangeRoundBands([0, width], .1);
-
-            var mintemp = d3.min(data, function (d) {
-                                return +d[country]});
-            var mintemp = (mintemp > 0) ? 0 : mintemp - 2;      
-        console.log(mintemp);
-        var y = d3.scale.linear()
-            .domain([mintemp, d3.max(data, function(d) { return +d[country]; }) * 1.1])
-            .range([height, 0]);
-
-        ///////////////////////
-        // Axis
-        var xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom");
-
-        var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left");
-
-        chart.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-
-        chart.append("g")
-            .attr("class", "y axis")
-            .call(yAxis);
-
-        ///////////////////////
-        // Title
-        chart.append("text")
-            .text("Temperature of " + country)
-            .attr("text-anchor", "middle")
-            .attr("class", "graph-title")
-            .attr("y", -40)
-            .attr("x", width / 2.0);
-
-        ///////////////////////
-        // Bars
-        var bar = chart.selectAll(".bar")
-            .data(data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return x(d.countrycode); })
-            .attr("y", height)
-            .attr("width", x.rangeBand())
-            .attr("height", 0);
-
-        bar.transition()
-            .duration(1500)
-            .ease("elastic")
-            .attr("y", function(d) { return y(d[country]); })
-            .attr("height", function(d) { return height - y(d[country]); })
-               
-
-        });
-    }
-    	createbar('FRA');
-	</script>
->>>>>>> .merge_file_a48448
 
 	<script src="./js/dataMap.js"></script>
 	<script>		var canvaswidth = document.getElementsByClassName('datamap')[0].attributes[0].value / 4 </script>
@@ -883,7 +725,8 @@
   		//		city: json["name"].toLowerCase()
 		//	});  
 	
-			createbar('FRA');
+			createbar(json["country_iso"]);
+			createplot(json["country_iso"]);   
 		});
 	</script>
 
@@ -918,10 +761,10 @@
 					.y(function(d) { return y(d[country]); });
 					
 				// Adds the svg canvas
-				var	svg = d3.select("#chart2")
+				var	svg = d3.select("#chart2").append("svg")
 						.attr("width", width + margin.left + margin.right)
 						.attr("height", height + margin.top + margin.bottom)
-					.append("g")
+						.append("g")
 						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 		
 				// Get the data
@@ -957,10 +800,11 @@
 					svg.append("g")		
 						.attr("class", "y axis")
 						.call(yAxis);
-				
+				  
 				});
+				d3.selectAll("svg").exit().remove();
 			}
-			createplot('FRA');    
+			// createplot('FRA');    
 		</script>
 		<script>
 		
@@ -978,7 +822,7 @@
 				var width = canvaswidth - margin.left - margin.right;
 				var height = 250 - margin.top - margin.bottom;
 		
-				var chart = d3.select("#chart")
+				var chart = d3.select("#chart").append("svg")
 					.attr("width", "100%")
 					.attr("height", "100%")
 					.append("g")
@@ -1043,11 +887,13 @@
 					.attr("y", function(d) { return y(d[country]); })
 					.attr("height", function(d) { return height - y(d[country]); })
 					   
-		
+				
+				d3.selectAll("chart").exit().remove();
 				});
+				
 			}
 		
-			createbar('FRA');
+			// createbar('FRA');
 			</script>
 
 </body>
