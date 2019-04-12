@@ -761,6 +761,7 @@
 					.y(function(d) { return y(d[country]); });
 					
 				// Adds the svg canvas
+				d3.select("#chart2").select("svg").remove();
 				var	svg = d3.select("#chart2").append("svg")
 						.attr("width", width + margin.left + margin.right)
 						.attr("height", height + margin.top + margin.bottom)
@@ -821,8 +822,10 @@
 		
 				var width = canvaswidth - margin.left - margin.right;
 				var height = 250 - margin.top - margin.bottom;
-		
-				var chart = d3.select("#chart").append("svg")
+				
+				d3.select("#chart").select("svg").remove();
+				var chart = d3.select("#chart")
+					.append("svg")
 					.attr("width", "100%")
 					.attr("height", "100%")
 					.append("g")
@@ -888,7 +891,7 @@
 					.attr("height", function(d) { return height - y(d[country]); })
 					   
 				
-				d3.selectAll("chart").exit().remove();
+				
 				});
 				
 			}
