@@ -2,9 +2,11 @@
 					
 	include 'db_info.php';
         
-    $myquery = "SELECT c.rank, c.city,m.country_code, m.country_iso, l.lat, l.lng, a.rk as arrivals_rank, r.rk as receipts_rank, s_poi.*, c.country, c.station
+    $myquery = "SELECT c.rank, c.city,m.country_code, m.country_iso, l.lat, l.lng, a.rk as arrivals_rank, r.rk as receipts_rank, s_poi.*, c.country, c.station, ci.*
+
 		FROM `cities` c
 		join cities_sygic_mapping m on c.rank = m.city_id 
+		join `city_indexes` ci on c.rank = ci.city_id
 		join sygic_city_location l on m.sygic_id = l.cityid  
 		join `arrivals_processed` a on c.rank = a.id 
 		join `receipts_processed` r on c.rank = r.id 
