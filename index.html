@@ -422,6 +422,15 @@
 			return -1;
 		}
 
+		function findStation(name){
+			for (i = 0; i < cities.length; i++){
+				if(cities[i].city == name){
+					return cities[i].station;
+				}
+			}
+			return -1;
+		}
+
 		function accrdClick(id) {
 
 			var panels = document.getElementsByClassName('panel');
@@ -522,7 +531,7 @@
 			_aqiFeed({  city: name.toLowerCase(), lang:"en",callback:function(aqi){
 					$("#my-container").html(aqi.details);
 				}  });
-			createbar('FRA');
+			//createbar('FRA');
 		}
 
 		function numOfPOI(index){
@@ -747,22 +756,24 @@
 			document.getElementById("divWordCloud").appendChild(elem);
 			var countryIso  = findCountryISO(json["name"]);
 			console.log(countryIso);
+
+
+			//BN for PM2.5 info and the two bars 
+			var stationname = findStation( json["name"] );
+			console.log("station name is : " + stationname +  json["name"] )
+
+			_aqiFeed({  city: stationname   ,  lang:"en",  callback:function(aqi){
+								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>%cityname AQI:</small> <div style='font-size:88px;height:180px;padding-top:30px;'>%aqiv</div> %impact</div>"));
+							}  });
+
+			createbar(json["country_iso"]);
+			createplot(json["country_iso"]);   
+			// YL PM2.5 ends
+
 			//YJ Added to sync with bubble interaction --begin
 			index = findAccordion(json["name"]);
 			accrdClick(index);
 			//YJ Added to sync with bubble interaction --end
-
-			_aqiFeed({  city: json["name"].toLowerCase()   ,  lang:"en",  callback:function(aqi){
-								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>%cityname AQI:</small> <div style='font-size:88px;height:180px;padding-top:30px;'>%aqiv</div> %impact</div>"));
-							}  });
-		//	_aqiFeed({    
-  		//		display:"<div style='%style;max-width:180px;text-align:center;'><small>%cityname AQI:</small> <div style='font-size:88px;height:60px;padding-top:30px;'>%aqiv</div> %impact</div>",  
-  		//		container:"city-aqi-container-display",    
-  		//		city: json["name"].toLowerCase()
-		//	});  
-	
-			createbar(json["country_iso"]);
-			createplot(json["country_iso"]);   
 		});
 	</script>
 
@@ -797,6 +808,7 @@
 					.y(function(d) { return y(d[country]); });
 					
 				// Adds the svg canvas
+				d3.select("#chart2").select("svg").remove();
 				var	svg = d3.select("#chart2").append("svg")
 						.attr("width", width + margin.left + margin.right)
 						.attr("height", height + margin.top + margin.bottom)
@@ -821,11 +833,11 @@
 						
 					svg.append("g")
 							.append("text")
-							.attr("x",function(d){return (width / 2) + margin.left;})
+							.attr("x",function(d){return (width / 2) + 2 * margin.left ;})
 							.attr("y", -10)
 							.attr("text-anchor", "end")
-							.text("Precipitation of " + country);
-				
+							.text("Average Precipitation" );
+
 					// Add the X Axis
 					svg.append("g")		
 						.attr("class", "x axis")
@@ -838,7 +850,7 @@
 						.call(yAxis);
 				  
 				});
-				d3.selectAll("svg").exit().remove();
+				//d3.selectAll("svg").exit().remove();
 			}
 			// createplot('FRA');    
 		</script>
@@ -857,8 +869,10 @@
 		
 				var width = canvaswidth - margin.left - margin.right;
 				var height = 250 - margin.top - margin.bottom;
-		
-				var chart = d3.select("#chart").append("svg")
+				
+				d3.select("#chart").select("svg").remove();
+				var chart = d3.select("#chart")
+					.append("svg")
 					.attr("width", "100%")
 					.attr("height", "100%")
 					.append("g")
@@ -900,7 +914,7 @@
 				///////////////////////
 				// Title
 				chart.append("text")
-					.text("Temperature of " + country)
+					.text("Average Temperature")
 					.attr("text-anchor", "middle")
 					.attr("class", "graph-title")
 					.attr("y", -40)
@@ -924,7 +938,7 @@
 					.attr("height", function(d) { return height - y(d[country]); })
 					   
 				
-				d3.selectAll("chart").exit().remove();
+				
 				});
 				
 			}
