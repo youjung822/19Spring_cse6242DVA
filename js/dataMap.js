@@ -34,6 +34,27 @@ var map = new Datamap({
 		colorBrown: 'brown',
 		colorBlack: 'black',
 	}
+	,
+	bubblesConfig: {
+        borderWidth: 0,
+        borderOpacity: 0,
+        borderColor: '#FFFFFF',
+        popupOnHover: true, // True to show the popup while hovering        
+        popupTemplate: function(geography, data) { // This function should just return a string
+          return '<div class="hoverinfo"><strong>' + data.name + '</strong></div>';
+        },
+        fillOpacity: 0.9,
+        animate: true,
+        highlightOnHover: true,
+        highlightFillColor: '#FC8D59',
+        highlightBorderColor: 'rgba(250, 15, 160, 0.2)',
+        highlightBorderWidth: 2,
+        highlightBorderOpacity: 0,
+        highlightFillOpacity: 0.85,
+        exitDelay: 1000, // Milliseconds
+        key: JSON.stringify
+    }
+	
 
 	// data: {
 		// USA: {fillKey: 'lt50' },
