@@ -764,7 +764,7 @@
 			console.log("station name is : " + stationname +  json["name"] )
 
 			_aqiFeed({  city: stationname   ,  lang:"en",  callback:function(aqi){
-								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>Air Quality Index<br/>%cityname</small> <div style='font-size:88px;height:180px;padding-top:30px;'>%aqiv</div> %impact</div>"));
+								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>Air Quality Index<br/>%cityname</small> <div style='font-size:88px;height:160px;padding-top:30px;'>%aqiv</div> %impact</div>"));
 							}  });
 
 			createbar(json["country_iso"]);
