@@ -486,13 +486,12 @@
 			} else {
 				panel.style.display = "block";
 				panel2.style.display = "block";
-
 				getCityDetail(index[1],cities[index[1]].cityid,"");
-
 			}
 
 			d3.select("#pnl_"+index[1].toString()).selectAll("*").remove();
 			numOfPOI(index[1]);
+            loadDetailDiv(index[1]);
 			slideIndex=1;
 		}
 
@@ -504,6 +503,14 @@
 			}
 			return -1;
 		}
+        function findCity(index){
+            for (i = 0; i < cities.length; i++){
+                if(i == index){
+                    return cities[i];
+                }
+            }
+            return -1;
+        }
 
 		var cityDetailGlobal="";
 		function getCityDetail(index,strCityId,category){
@@ -525,7 +532,6 @@
 			xmlhttp.open("GET","./include/fetch_citydetail.php?c="+category+"&q="+strCityId,true); //?q="+str"
 			xmlhttp.send();
 		}
-
 
 		function createPOIDetail(index, data, category){
 			var sliderHtml="";
@@ -655,58 +661,7 @@
 					.style("fill", "#636363");
 		}
 
-		function addLineChart(dataL){
-			//Line Graph dataBangladesh
-			var	margin2 = {top: 60, right: 20, bottom: 30, left: 35},
-					width2 = 270 - margin.left - margin.right,
-					height2 = 220 - margin.top - margin.bottom;
-			// Adds the svg canvas
-			var svg2 = d3.select("#lineChart")
-					.attr("width", width2 + margin2.left + margin2.right)
-					.attr("height", height2 + margin2.top + margin2.bottom)
-					.append("g")
-					.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-			// Set the ranges
-			var	x2 =  d3.scaleLinear().domain([d3.min(dataL, function(d) { return d.year;}), d3.max(dataL, function(d) { return d.year; })]).range([0, width2]);
-			var	y2 = d3.scaleLinear().domain([d3.min(dataL, function(d) { return Number(d.popGrowth);}), d3.max(dataL, function(d) { return Number(d.popGrowth); })]).range([height2, 0]);
-
-			var valueLine = d3.line()
-					.x(function(d){return x2(d.year);})
-					.y(function(d){return y2(d.popGrowth);});
-
-			svg2.append("path")
-					.datum(dataL)
-					.attr("class", "path2")
-					.attr("d", valueLine);
-			// Add the X Axis
-			svg2.append("g")
-					.attr("class", "axisline2")
-					.attr("transform", "translate(0," + height2 + ")")
-					.call(d3.axisBottom(x2).ticks(5).tickFormat(d3.format("")) );
-
-			svg2.append("text")
-					.attr("class","label")
-					.attr("transform",
-							"translate(" + (width2-15) + " ," +
-							(height2+30) + ")")
-					.text("Year");
-			// Add the Y Axis
-			svg2.append("g")
-					.attr("class", "axisline2")
-					.call(d3.axisLeft(y2).ticks(5));
-
-			svg2.append("text")
-					.attr("class","label")
-					.attr("transform",
-							"translate(" + (-20) + " ," +(-10) + ")")
-					.text("Pct %");
-
-			d3.selectAll("svg2").exit().remove();
-
-		}
-
 		//Slide function
-
 		function plusSlides(n) {
 			showSlides(slideIndex += n);
 		}
@@ -727,7 +682,7 @@
 			}
 			if (slides[slideIndex-1] != null){
 				slides[slideIndex-1].style.display = "block";
-				console.log(cityDetailGlobal[slideIndex-1])
+				//console.log(cityDetailGlobal[slideIndex-1])
 				document.getElementById('sliderDsc').innerHTML = "<table class=\"table \" style=\"width:100%\">\n"+
 						"<tr><td><b>"+cityDetailGlobal[slideIndex-1]["POIName"]+"</b></td></tr>\n"+
 						"<tr><td>Rating: "+cityDetailGlobal[slideIndex-1]["rating"]+"</td></tr>\n"+
@@ -736,6 +691,30 @@
 
 			}
 		}
+
+		function loadDetailDiv(index){
+            var cityData = findCity(index);
+            console.log(cityData);
+            document.getElementById("divWordCloud").innerHTML = "";
+            var elem = document.createElement("img");
+            elem.src = "wordcloud/" + cityData.city_name.toLowerCase() + ".png";
+            elem.style.width = '100%';
+            elem.style.height = '100%';
+            document.getElementById("divWordCloud").appendChild(elem);
+            var countryIso  = cityData.country_iso;
+            //BN for PM2.5 info and the two bars
+            var stationname = cityData.station;
+
+            _aqiFeed({  city: stationname   ,  lang:"en",  callback:function(aqi){
+                    $("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>Air Quality Index<br/>%cityname</small> <div style='font-size:88px;height:160px;padding-top:30px;'>%aqiv</div> %impact</div>"));
+                }  });
+
+            createbar(countryIso);
+            createplot(countryIso);
+            // YL PM2.5 ends
+
+        }
+
 
 	</script>
 	<!----  add by Brian-->
@@ -763,7 +742,7 @@
 			var countryIso  = findCountryISO(json["name"]);
 			//BN for PM2.5 info and the two bars 
 			var stationname = findStation( json["name"] );
-			console.log("station name is : " + stationname +  json["name"] )
+			//console.log("station name is : " + stationname +  json["name"] )
 
 			_aqiFeed({  city: stationname   ,  lang:"en",  callback:function(aqi){
 								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>Air Quality Index<br/>%cityname</small> <div style='font-size:88px;height:160px;padding-top:30px;'>%aqiv</div> %impact</div>"));
