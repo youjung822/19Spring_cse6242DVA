@@ -6,12 +6,12 @@
                      ,poi.name as POIName
                      ,poi.cityid as cityId
                      ,poi.name_suffix as cityName
-                     ,poi.rating as rating
+                     ,ROUND(poi.rating,2) as rating
                      ,poi.rating_local as localRating
-                     ,thumbnail_url
-                     ,url
+                     ,poi.thumbnail_url
+                     ,poi.url
                 FROM `sygic_poi` poi
-                WHERE poi.cityid ='".$q."'limit 15";
+                WHERE poi.cityid ='".$q."' and poi.thumbnail_url is not null order by poi.rating desc, poi.rating_local desc limit 15";
 
     $query = mysqli_query($connection, $myquery);
     
