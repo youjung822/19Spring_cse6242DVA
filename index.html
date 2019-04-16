@@ -278,6 +278,7 @@
 
 		var bubbleArray = [];
 		var cities;
+		var slideIndex = 1;
 
 		$.get("./include/fetch_recommendation.php", function(data){
 			getAllCities(data);
@@ -459,6 +460,8 @@
 				if(i!=index[1]){
 					panels[i].style.display = "none";
 					panels2[i].style.display = "none";
+
+					document.getElementById('pnl_2_'+i.toString()).innerHTML = "";
 				}
 			}
 			var panel = acc.nextElementSibling;
@@ -467,27 +470,61 @@
 			if (panel.style.display === "block") {
 				panel.style.display = "none";
 				panel2.style.display = "none";
+				document.getElementById('pnl_2_'+index[1].toString()).innerHTML = "";
+
 			} else {
 				panel.style.display = "block";
 				panel2.style.display = "block";
-			}
 
+				var cityDetail = getCityDetail(cities[index[1]].cityid);
+				document.getElementById('pnl_2_'+index[1].toString()).innerHTML = createPOIDetail(index[1],cityDetail);
+				showSlides(slideIndex);
+				//getCityDetail(cities[index[1]].cityid);
+			}
+			console.log("cities[index[1]].cityid "+ cities[index[1]].cityid)
 			d3.select("#pnl_"+index[1].toString()).selectAll("*").remove();
 			numOfPOI(index[1]);
 			//document.getElementById('pnl_2_'+index[1].toString()).innerHTML += createPOIDetail(index[1]);
 		}
 
-		function createPOIDetail(index){
+		function getCityDetail(strCityId){
+
+			if (window.XMLHttpRequest) {
+				// code for IE7+, Firefox, Chrome, Opera, Safari
+				console.log("code for IE7+, Firefox, Chrome, Opera, Safari");
+				xmlhttp = new XMLHttpRequest();
+			} else {
+				// code for IE6, IE5
+				console.log("code for IE6, IE5");
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			xmlhttp.onreadystatechange = function(data) {
+				console.log("onreadystatechange "+ this.readyState);
+				if (this.readyState == 4 && this.status == 200) {
+					console.log(this.responseText);
+					return this.responseText;
+
+				}
+			}
+			xmlhttp.open("GET","./include/fetch_citydetail.php?q="+strCityId,true); //?q="+str"
+			console.log("test");
+			xmlhttp.send();
+			console.log("test2");
+		}
+
+
+		function createPOIDetail(index, data){
+			console.log(data);
 			var sliderHtml="";
 			for (i = 0; i < 5; i++) {
 				var newHtml =
 					"<div class=\"mySlides fade\" id=\"sld_"+index+"_"+i.toString() +"\">\n"+
-					"<img src=\"img_nature_wide.jpg\" style=\"width:100%\" id=\"img_"+index+"_"+ i.toString() +"\"></div>\n";
+					"<img src=\""+"https:\\/\\/media-cdn.sygictraveldata.com\\/media\\/poi:21007" +"\" style=\"width:100%\" id=\"img_"+index+"_"+ i.toString() +"\"></div>\n";
 
 				//	"<div class=\"text\" id=\"caption_"+index+"_"+ i.toString() +"\"> Caption "+i.toString() + "</div>\n";
 				sliderHtml += newHtml;
 			}
-			var dotHtml;
+			var dotHtml="";
 			for (i = 0; i < 5; i++) {
 				dotHtml = dotHtml+ "<span class=\"dot\" id=\"dot_"+index+"_"+i.toString()+ "\" onclick=\"currentSlide("+i.toString()+")\"></span>\n" ;
 			}
@@ -568,9 +605,9 @@
 					.call(yAxis);
 
 			svg.append("text")
-					.attr("transform", "translate(" + 0 + " ," + 0 + ")")
+					.attr("transform", "translate(" + 25 + " ," + 0 + ")")
 					.style("text-anchor", "middle")
-					.text("Attraction score");
+					.text("# of Point of Interest");
 
 			var bars = svg.selectAll(".bar")
 					.data(dataRevised)
@@ -681,8 +718,8 @@
 		}
 
 		//Slide function
-		var slideIndex = 1;
-		showSlides(slideIndex);
+
+		//;
 
 		function plusSlides(n) {
 			showSlides(slideIndex += n);
