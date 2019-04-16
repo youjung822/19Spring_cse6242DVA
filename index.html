@@ -546,14 +546,14 @@
 			}
 
 		return	"<small id=\"poiCategory\" style=\"color:black\">"+category+" POI Details</small>\n"+
-				"<div class=\"slideContainer\">\n"+
+				"<div class=\"slideContainer\" style=\"margin-bottom:5px;\">\n"+
 				"<div class=\"slideshow-container fixed\">\n"+
 				sliderHtml+
 				"<a class=\"prev\" onclick=\"plusSlides(-1)\">&#10094;</a>\n"+
 				"<a class=\"next\" onclick=\"plusSlides(1)\">&#10095;</a>\n"+
 				"</div>\n"+
 				"<div class = \"flex-item\" id=\"sliderDsc\">"+descName+"</div>\n"+
-				"</div></br>"
+				"</div>"
 				;
 		}
 
@@ -579,7 +579,7 @@
 			//set up svg using margin conventions - we'll need plenty of room on the left for labels
 			var margin = { top: 25,right: 0,bottom: 15,left: 60};
 			var width = 250 - margin.left - margin.right,
-					height = 150 - margin.top - margin.bottom;
+					height = 140 - margin.top - margin.bottom;
 
 			var svg = d3.select("#pnl_"+index.toString()).append("svg")
 					.attr("width", width + margin.left + margin.right)
