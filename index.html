@@ -246,7 +246,7 @@
 					budget: <input type="text" name="budget" id="budget" value="">
 					density: <input type="text" name="density" id="density" value="">
 				</div>	
-				<div id="divMap" class="main-div"></div>
+				<div id="divMap" class="main-div">World Map of Trip Analyzer</div>
 				<div id="divBottom" class="main-div">
 				
 					<!-- Brian, please add mock up bottom chart here -->
@@ -273,6 +273,7 @@
 					
 				</div>
 				<div id="divRight" class="main-div">
+					testing
 					<!-- Youjung, please add top 10 / 15 / 20 accordion here -->
 				</div>
 			</div>
@@ -408,7 +409,7 @@
 		function generateTop20Ranking(){
 			if (cities != null)
 				for (i = 0; i < 20; i++){
-					var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 5, fillKey: 'colorRank'+i, country_iso: cities[i].country_iso,
+					var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 40-i*1.5, fillKey: 'colorRank'+i, country_iso: cities[i].country_iso,
 					rating: cities[i].rating,Safety_Class: cities[i].Safety_Class, advice: cities[i].advice, Price_Class: cities[i].Price_Class,COL_Index: cities[i].COL_Index,
 					Crime_class: cities[i].Crime_class, Crime_index : cities[i].Crime_index, happiness_Class: cities[i].happiness_Class,happiness_index: cities[i].happiness_index,
 					Senti_Class: cities[i].Senti_Class , pos_perc: cities[i].pos_perc
@@ -432,9 +433,9 @@
 
 		// testing method: print text to right section
 		function addAccordions(){
-			document.getElementById('divRight').innerHTML = '';
+			document.getElementById('divRight').innerHTML = 'Ranking';
 			if (cities != null)
-				for (i = 0; i < 15; i++) {
+				for (i = 0; i < 15; i++) {					
 					document.getElementById('divRight').innerHTML += //cities[i].city + '<br>';
 					"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick="+"accrdClick(accrd_"+i.toString()+".id)\;"+">"+"#"+(i+1).toString()+" " +cities[i].city+", "+cities[i].country+"</button>\n" +
 					"<div class=\"panel\" id=pnl_"+i.toString()+"></div>\n"+
