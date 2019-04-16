@@ -163,6 +163,7 @@
 			animation-duration: 1.5s;
 		}
 		/* index display */
+		.tooltitle {background-color: white; color: black }
 		.indextitle {background-color: Beige; color:black }
 		.Hi { background-color:red; color:white;}
  		.Medium { background-color:yellow; color:black;}
@@ -245,7 +246,7 @@
 					budget: <input type="text" name="budget" id="budget" value="">
 					density: <input type="text" name="density" id="density" value="">
 				</div>	
-				<div id="divMap" class="main-div"></div>
+				<div id="divMap" class="main-div">World Map of Trip Analyzer</div>
 				<div id="divBottom" class="main-div">
 				
 					<!-- Brian, please add mock up bottom chart here -->
@@ -272,6 +273,7 @@
 					
 				</div>
 				<div id="divRight" class="main-div">
+					testing
 					<!-- Youjung, please add top 10 / 15 / 20 accordion here -->
 				</div>
 			</div>
@@ -431,7 +433,7 @@
 
 		// testing method: print text to right section
 		function addAccordions(){
-			document.getElementById('divRight').innerHTML = '';
+			document.getElementById('divRight').innerHTML = 'Ranking';
 			if (cities != null)
 				for (i = 0; i < 20; i++) {
 					document.getElementById('divRight').innerHTML += //cities[i].city + '<br>';
@@ -764,7 +766,7 @@
 			console.log("station name is : " + stationname +  json["name"] )
 
 			_aqiFeed({  city: stationname   ,  lang:"en",  callback:function(aqi){
-								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>%cityname AQI:</small> <div style='font-size:88px;height:180px;padding-top:30px;'>%aqiv</div> %impact</div>"));
+								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>Air Quality Index<br/>%cityname</small> <div style='font-size:88px;height:160px;padding-top:30px;'>%aqiv</div> %impact</div>"));
 							}  });
 
 			createbar(json["country_iso"]);
