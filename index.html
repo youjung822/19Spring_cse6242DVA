@@ -433,7 +433,7 @@
 		function addAccordions(){
 			document.getElementById('divRight').innerHTML = '';
 			if (cities != null)
-				for (i = 0; i < 15; i++) {
+				for (i = 0; i < 20; i++) {
 					document.getElementById('divRight').innerHTML += //cities[i].city + '<br>';
 					"<button class=\"accordion\" id=accrd_"+i.toString()+" onClick="+"accrdClick(accrd_"+i.toString()+".id)\;"+">"+"#"+(i+1).toString()+" " +cities[i].city+", "+cities[i].country+"</button>\n" +
 					"<div class=\"panel\" id=pnl_"+i.toString()+"></div>\n"+
@@ -485,7 +485,7 @@
 				panel.style.display = "block";
 				panel2.style.display = "block";
 
-				getCityDetail(index[1],cities[index[1]].cityid);
+				getCityDetail(index[1],cities[index[1]].cityid,"");
 
 			}
 
@@ -504,7 +504,7 @@
 		}
 
 		var cityDetailGlobal="";
-		function getCityDetail(index,strCityId){
+		function getCityDetail(index,strCityId,category){
 			if (window.XMLHttpRequest) {
 				// code for IE7+, Firefox, Chrome, Opera, Safari
 				xmlhttp = new XMLHttpRequest();
@@ -516,16 +516,16 @@
 				if (this.readyState == 4 && this.status == 200) {
 					data = JSON.parse(this.responseText);
 					cityDetailGlobal=data;
-					document.getElementById('pnl_2_'+index.toString()).innerHTML = createPOIDetail(index, data);
+					document.getElementById('pnl_2_'+index.toString()).innerHTML = createPOIDetail(index, data,category);
 					showSlides(slideIndex);
 				}
 			}
-			xmlhttp.open("GET","./include/fetch_citydetail.php?q="+strCityId,true); //?q="+str"
+			xmlhttp.open("GET","./include/fetch_citydetail.php?c="+category+"&q="+strCityId,true); //?q="+str"
 			xmlhttp.send();
 		}
 
 
-		function createPOIDetail(index, data){
+		function createPOIDetail(index, data, category){
 			var sliderHtml="";
 			var descName= "";
 			for (i = 0; i < data.length; i++) {
@@ -537,7 +537,8 @@
 				sliderHtml += newHtml;
 			}
 
-		return	"<div class=\"slideContainer\">\n"+
+		return	"<small id=\"poiCategory\" style=\"color:black\">"+category+" POI Details</small>\n"+
+				"<div class=\"slideContainer\">\n"+
 				"<div class=\"slideshow-container fixed\">\n"+
 				sliderHtml+
 				"<a class=\"prev\" onclick=\"plusSlides(-1)\">&#10094;</a>\n"+
@@ -550,15 +551,15 @@
 
 		function numOfPOI(index){
 			var data=[];
-			data.push({score: Number(cities[index]["discovering"]), type: "Discovering"});
-			data.push({score: Number(cities[index]["eating"]), type: "Eating"});
-			data.push({score: Number(cities[index]["family"]), type: "Family"});
-			data.push({score: Number(cities[index]["hiking"]), type: "Hiking"});
-			data.push({score: Number(cities[index]["nightlife"]), type: "Nightlife"});
-			data.push({score: Number(cities[index]["relaxing"]), type: "Relaxing"});
-			data.push({score: Number(cities[index]["shopping"]), type: "Shopping"});
-			data.push({score: Number(cities[index]["sightseeing"]), type: "Sightseeing"});
-			data.push({score: Number(cities[index]["sports"]), type: "Sports"});
+			data.push({score: Number(cities[index]["discovering"]), type: "Discovering",cIndex:index ,cityId:cities[index]["cityid"]});
+			data.push({score: Number(cities[index]["eating"]), type: "Eating", cIndex:index,cityId:cities[index]["cityid"]});
+			data.push({score: Number(cities[index]["family"]), type: "Family", cIndex:index,cityId:cities[index]["cityid"]});
+			data.push({score: Number(cities[index]["hiking"]), type: "Hiking", cIndex:index,cityId:cities[index]["cityid"]});
+			data.push({score: Number(cities[index]["nightlife"]), type: "Nightlife", cIndex:index,cityId:cities[index]["cityid"]});
+			data.push({score: Number(cities[index]["relaxing"]), type: "Relaxing", cIndex:index,cityId:cities[index]["cityid"]});
+			data.push({score: Number(cities[index]["shopping"]), type: "Shopping", cIndex:index,cityId:cities[index]["cityid"]});
+			data.push({score: Number(cities[index]["sightseeing"]), type: "Sightseeing",cIndex:index,cityId:cities[index]["cityid"]});
+			data.push({score: Number(cities[index]["sports"]), type: "Sports", cIndex:index,cityId:cities[index]["cityid"]});
 
 			data = data.sort(function (a, b) {
 				return d3.descending(a.score, b.score);
@@ -620,6 +621,7 @@
 						return x(d.score);
 					})
 					.attr("height", 18)
+					.on("click",handleClick)
 					.on("mouseover",handleMouseOver)
 					.on("mouseout", handleMouseOut);
 
@@ -633,6 +635,10 @@
 					.text(function (d) { return d3.format(",")(d.score);})
 					.attr("class", "label")
 					.style("fill","#f0f0f0");
+		}
+
+		function handleClick(d) {
+			getCityDetail(d.cIndex,d.cityId, d.type);
 		}
 
 		function handleMouseOver(d) {
@@ -738,10 +744,6 @@
 				L.async=1;L.src='http://feed.aqicn.org/feed/'+(c[n].city)+'/'+(c[n].lang||'')+'/feed.v1.js?n='+n+k;
 				e.parentNode.insertBefore(L,e);  };  })(  window,document,'script','_aqiFeed'  );
 		</script>
-
-
-
-
 
 	<script src="./js/dataMap.js"></script>
 	<script>		var canvaswidth = document.getElementsByClassName('datamap')[0].attributes[0].value / 4 </script>

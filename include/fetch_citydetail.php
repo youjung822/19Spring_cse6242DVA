@@ -1,5 +1,7 @@
 <?php
-    $q = strval($_GET['q']);
+    $c = strval($_GET['c']);
+    $q = lcfirst(strval($_GET['q']));
+
 	include 'db_info.php';
 
     $myquery = "SELECT poi.id as poiId,poi.categories as categories
@@ -11,7 +13,8 @@
                      ,poi.thumbnail_url
                      ,poi.url
                 FROM `sygic_poi` poi
-                WHERE poi.cityid ='".$q."' and poi.thumbnail_url is not null order by poi.rating desc, poi.rating_local desc limit 15";
+                WHERE poi.cityid ='".$q."' and poi.categories like '%".$c."%%'
+                 and poi.thumbnail_url is not null order by poi.rating desc, poi.rating_local desc limit 15";
 
     $query = mysqli_query($connection, $myquery);
     
