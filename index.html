@@ -303,9 +303,6 @@
 		var cities;
 		var slideIndex = 1;
 
-		//BN * add variable for AQI popup
-		var aqi_num =-2;
-		//
 		$.get("./include/fetch_recommendation.php", function(data){
 			getAllCities(data);
 			analyze();
@@ -715,7 +712,17 @@
             createbar(countryIso);
             createplot(countryIso);
             // YL PM2.5 ends
-
+						// BN change the popup location
+						const sleep = (milliseconds) => {
+									return new Promise(resolve => setTimeout(resolve, milliseconds))
+						}
+						const changepopup = async () => {
+								await sleep(1000)
+								var thisid = document.getElementById("my-container").getElementsByTagName("Div")[3]["id"];
+								document.getElementById(thisid).setAttribute("style","position: absolute; z-index: 20;  margin-left: 150px; margin-top:-160px;");
+						}
+						changepopup();
+						//BN
         }
 
 
@@ -747,9 +754,9 @@
 			var stationname = findStation( json["name"] );
 
 			_aqiFeed({  city: stationname   ,  lang:"en",  callback:function(aqi){
-								$("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>Air Quality Index</small><br/><small> %cityname</small> <div style='font-size:88px;height:160px;padding-top:30px;'>%aqiv</div> %impact</div>"));
-							}  });
-
+                $("#my-container").html(aqi.text ("<div style='%style;max-width:"+ canvaswidth+"px;text-align:center;'><small>Air Quality Index<br/>%cityname</small> <div style='font-size:88px;height:160px;padding-top:30px;'>%aqiv</div> %impact</div>"));
+						 }  });
+						 
 			createbar(json["country_iso"]);
 			createplot(json["country_iso"]);   
 			// YL PM2.5 ends
@@ -758,17 +765,18 @@
 			index = findAccordion(json["name"]);
 			accrdClick(index);
 			//YJ Added to sync with bubble interaction --end
-			aqi_num = aqi_num +2 ;				
+		
 			// BN change the popup location
 			const sleep = (milliseconds) => {
   					return new Promise(resolve => setTimeout(resolve, milliseconds))
 			}
 			const changepopup = async () => {
-  				await sleep(1000)
-					document.getElementById("aqi-popup-" + aqi_num).setAttribute("style","position: absolute; z-index: 20;  margin-left: 150px; margin-top:-160px;");
+					await sleep(1000)
+					var thisid = document.getElementById("my-container").getElementsByTagName("Div")[3]["id"];
+					document.getElementById(thisid).setAttribute("style","position: absolute; z-index: 20;  margin-left: 150px; margin-top:-160px;");
 			}
 			changepopup();
-
+			//BN
 		});
 	</script>
 
