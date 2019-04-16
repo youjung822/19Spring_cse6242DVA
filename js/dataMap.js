@@ -110,13 +110,13 @@ function addBubbles(){
 				"<br/>" +
 "<table><tbody>" +
 					"<tr><td align='center' colspan=2 class='indextitle'>  Sentimental Reviews </td></tr>"+ 
-					"<tr><td align='left'>Redd Review Index</td><td align='right' class='" + data.Senti_Class +"'>" + Number(data.pos_perc).toFixed(2) + "</td></tr>" +
-					"<tr><td align='left'>Happiness Index::</td><td align='right' class=" + data.happiness_Class +">" + Number(data.happiness_index).toFixed(2) + "</td></tr>" +
+					"<tr><td align='left' class='tooltitle'>Redd Review Index</td><td align='right' class='" + data.Senti_Class +"'>" + Number(data.pos_perc).toFixed(2) + "</td></tr>" +
+					"<tr><td align='left' class='tooltitle'>Happiness Index::</td><td align='right' class=" + data.happiness_Class +">" + Number(data.happiness_index).toFixed(2) + "</td></tr>" +
 					"<tr><td align='center' colspan=2 class='indextitle'>  Price Factor</td></tr>"+ 
-					"<tr><td align='left'>Price Index:</td><td align='right' class='" + data.Price_Class +"'>" + data.COL_Index + "</td></tr>" +
+					"<tr><td align='left' class='tooltitle'>Price Index:</td><td align='right' class='" + data.Price_Class +"'>" + data.COL_Index + "</td></tr>" +
 					"<tr><td align='center' colspan=2 class='indextitle'>  Safety Factors</td></tr>"+ 
-					"<tr><td align='left'>Crime Rate:</td><td align='right' class='" + data.Crime_class +"'>" + data.Crime_index + "</td></tr>" +
-					"<tr><td align='left'>Travel Warning:</td><td align='right' class='" + data.Safety_Class +"'>" + data.rating + "</td></tr>" +
+					"<tr><td align='left' class='tooltitle'>Crime Rate:</td><td align='right' class='" + data.Crime_class +"'>" + data.Crime_index + "</td></tr>" +
+					"<tr><td align='left' class='tooltitle'>Travel Warning:</td><td align='right' class='" + data.Safety_Class +"'>" + data.rating + "</td></tr>" +
 					"<tr><td align='center' colspan=2, class ='" + data.Safety_Class+ "'>" + data.advice + "</td></tr>" +
 "</table></tbody>" +
 
