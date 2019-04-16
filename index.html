@@ -3,7 +3,7 @@
 <head>
 	<title>Trip Analyzer</title>
 	<link rel="stylesheet" href="./css/style.css">
-	<link rel="stylesheet" href="./css/jquery-ui.css">	
+	<link rel="stylesheet" href="./css/jquery-ui.css">
 	<link rel="stylesheet" type="text/css" href="./css/zInput_default_stylesheet.css">
 	<style>
 		.accordion {
@@ -45,7 +45,7 @@
 			stroke-width: 2;
 			fill: none;
 		}
-		path { 
+		path {
 			stroke: steelblue;
 			stroke-width: 2;
 			fill: none;
@@ -71,13 +71,34 @@
 			grid-template-columns: 4fr 2fr; /* fraction*/
 		}
 		.mySlides {display: none}
+		.myDesc {display: none}
 		img {vertical-align: middle;}
 		/* Slideshow container */
 		.slideshow-container {
-			max-width: 150px;
+			max-width: 200px;
 			position: relative;
 			margin: auto;
 		}
+		.slideContainer{
+			background-color:#2E4272;
+			display:flex;
+		}
+		.fixed{
+			background-color:#4F628E;
+			width: 200px;
+		}
+		.flex-item{
+			background-color:#4F628E;
+			width: 100px;
+		}
+		table, td {
+			vertical-align:top;
+			text-align:left;
+			word-wrap: break-word;
+			font-size: 12px;
+			color:white;
+		}
+
 		/* Next & previous buttons */
 		.prev, .next {
 			cursor: pointer;
@@ -439,19 +460,9 @@
 			return -1;
 		}
 
-		function findStation(name){
-			for (i = 0; i < cities.length; i++){
-				if(cities[i].city == name){
-					return cities[i].station;
-				}
-			}
-			return -1;
-		}
-
 		function accrdClick(id) {
 			var panels = document.getElementsByClassName('panel');
 			var panels2 = document.getElementsByClassName('panel2');
-			console.log(panels2);
 
 			var acc = document.getElementById(id);
 			var index = id.split("_");
@@ -460,13 +471,11 @@
 				if(i!=index[1]){
 					panels[i].style.display = "none";
 					panels2[i].style.display = "none";
-
 					document.getElementById('pnl_2_'+i.toString()).innerHTML = "";
 				}
 			}
 			var panel = acc.nextElementSibling;
 			var panel2 = panel.nextElementSibling;
-			console.log(panel);
 			if (panel.style.display === "block") {
 				panel.style.display = "none";
 				panel2.style.display = "none";
@@ -476,80 +485,67 @@
 				panel.style.display = "block";
 				panel2.style.display = "block";
 
-				var cityDetail = getCityDetail(cities[index[1]].cityid);
-				document.getElementById('pnl_2_'+index[1].toString()).innerHTML = createPOIDetail(index[1],cityDetail);
-				showSlides(slideIndex);
-				//getCityDetail(cities[index[1]].cityid);
+				getCityDetail(index[1],cities[index[1]].cityid);
+
 			}
-			console.log("cities[index[1]].cityid "+ cities[index[1]].cityid)
+
 			d3.select("#pnl_"+index[1].toString()).selectAll("*").remove();
 			numOfPOI(index[1]);
-			//document.getElementById('pnl_2_'+index[1].toString()).innerHTML += createPOIDetail(index[1]);
+			slideIndex=1;
 		}
 
-		function getCityDetail(strCityId){
+		function findStation(name){
+			for (i = 0; i < cities.length; i++){
+				if(cities[i].city == name){
+					return cities[i].station;
+				}
+			}
+			return -1;
+		}
 
+		var cityDetailGlobal="";
+		function getCityDetail(index,strCityId){
 			if (window.XMLHttpRequest) {
 				// code for IE7+, Firefox, Chrome, Opera, Safari
-				console.log("code for IE7+, Firefox, Chrome, Opera, Safari");
 				xmlhttp = new XMLHttpRequest();
 			} else {
 				// code for IE6, IE5
-				console.log("code for IE6, IE5");
 				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 			}
 			xmlhttp.onreadystatechange = function(data) {
-				console.log("onreadystatechange "+ this.readyState);
 				if (this.readyState == 4 && this.status == 200) {
-					console.log(this.responseText);
-					return this.responseText;
-
+					data = JSON.parse(this.responseText);
+					cityDetailGlobal=data;
+					document.getElementById('pnl_2_'+index.toString()).innerHTML = createPOIDetail(index, data);
+					showSlides(slideIndex);
 				}
 			}
 			xmlhttp.open("GET","./include/fetch_citydetail.php?q="+strCityId,true); //?q="+str"
-			console.log("test");
 			xmlhttp.send();
-			console.log("test2");
 		}
 
 
 		function createPOIDetail(index, data){
-			console.log(data);
 			var sliderHtml="";
-			for (i = 0; i < 5; i++) {
+			var descName= "";
+			for (i = 0; i < data.length; i++) {
+				var tumbNail = data[i]["thumbnail_url"];
 				var newHtml =
 					"<div class=\"mySlides fade\" id=\"sld_"+index+"_"+i.toString() +"\">\n"+
-					"<img src=\""+"https:\\/\\/media-cdn.sygictraveldata.com\\/media\\/poi:21007" +"\" style=\"width:100%\" id=\"img_"+index+"_"+ i.toString() +"\"></div>\n";
-
-				//	"<div class=\"text\" id=\"caption_"+index+"_"+ i.toString() +"\"> Caption "+i.toString() + "</div>\n";
+					"<a href=\""+data[i]["url"] +"\">\n"+
+					"<img src=\""+tumbNail +"\" style=\"width:100%\" id=\"img_"+index+"_"+ i.toString() +"\" ></a></div>\n";
 				sliderHtml += newHtml;
 			}
-			var dotHtml="";
-			for (i = 0; i < 5; i++) {
-				dotHtml = dotHtml+ "<span class=\"dot\" id=\"dot_"+index+"_"+i.toString()+ "\" onclick=\"currentSlide("+i.toString()+")\"></span>\n" ;
-			}
 
-		return	"<div class=\"slideshow-container\">\n"+
+		return	"<div class=\"slideContainer\">\n"+
+				"<div class=\"slideshow-container fixed\">\n"+
 				sliderHtml+
 				"<a class=\"prev\" onclick=\"plusSlides(-1)\">&#10094;</a>\n"+
 				"<a class=\"next\" onclick=\"plusSlides(1)\">&#10095;</a>\n"+
-				//"</div>\n"+
-				"<div style=\"text-align:center\">\n"+dotHtml+"</div>\n";
-		}
-
-		function loadDetail(name) {
-			console.log("loadDetail:"+ name);
-			document.getElementById("divWordCloud").innerHTML = "";
-			var elem = document.createElement("img");
-			elem.src = "wordcloud/" + name.toLowerCase() + ".png";
-			elem.style.width = '100%';
-			elem.style.height = '100%';
-			document.getElementById("divWordCloud").appendChild(elem);
-
-			_aqiFeed({  city: name.toLowerCase(), lang:"en",callback:function(aqi){
-					$("#my-container").html(aqi.details);
-				}  });
-			//createbar('FRA');
+				"</div>\n"+
+				"<div class = \"flex-item\" id=\"sliderDsc\">"+descName+"</div>\n"+
+				"</div></br>"
+				;
 		}
 
 		function numOfPOI(index){
@@ -639,22 +635,6 @@
 					.style("fill","#f0f0f0");
 		}
 
-		function createCountryDataSet(country){
-			var dataTemp = data.filter(function(d){ return d.country == country;})
-			var dataL=[];
-			var pop = Number(dataTemp[0].population_2012);
-			dataL.push({"year":2013, "popGrowth":(Number(dataTemp[0].growth.year_2013)/pop*100)});
-			pop= pop + Number(dataTemp[0].growth.year_2013);
-			dataL.push({"year":2014, "popGrowth":(Number(dataTemp[0].growth.year_2014)/pop*100)});
-			pop= pop + Number(dataTemp[0].growth.year_2014);
-			dataL.push({"year":2015, "popGrowth":(Number(dataTemp[0].growth.year_2015)/pop*100)});
-			pop= pop + Number(dataTemp[0].growth.year_2015);
-			dataL.push({"year":2016, "popGrowth":(Number(dataTemp[0].growth.year_2016)/pop*100)});
-			pop= pop + Number(dataTemp[0].growth.year_2016);
-			dataL.push({"year":2017, "popGrowth":(Number(dataTemp[0].growth.year_2017)/pop*100)});
-			return dataL;
-		}
-
 		function handleMouseOver(d) {
 			var bar = d3.select(this)
 					.style("fill", "orange");
@@ -719,8 +699,6 @@
 
 		//Slide function
 
-		//;
-
 		function plusSlides(n) {
 			showSlides(slideIndex += n);
 		}
@@ -729,22 +707,26 @@
 			showSlides(slideIndex = n);
 		}
 
-		function showSlides(n) {			
+		function showSlides(n) {
 			var i;
 			var slides = document.getElementsByClassName("mySlides");
-			var dots = document.getElementsByClassName("dot");			
 			if (n > slides.length) {slideIndex = 1}
-			if (n < 1) {slideIndex = slides.length}
+			if (n < 1) {
+				slideIndex = slides.length
+			}
 			for (i = 0; i < slides.length; i++) {
 				slides[i].style.display = "none";
 			}
-			for (i = 0; i < dots.length; i++) {
-				dots[i].className = dots[i].className.replace(" active", "");
-			}			
-			if (slides[slideIndex-1] != null)
+			if (slides[slideIndex-1] != null){
 				slides[slideIndex-1].style.display = "block";
-			if (dots[slideIndex-1] != null)
-				dots[slideIndex-1].className += " active";
+				console.log(cityDetailGlobal[slideIndex-1])
+				document.getElementById('sliderDsc').innerHTML = "<table class=\"table \" style=\"width:100%\">\n"+
+						"<tr><td><b>"+cityDetailGlobal[slideIndex-1]["POIName"]+"</b></td></tr>\n"+
+						"<tr><td>Rating: "+cityDetailGlobal[slideIndex-1]["rating"]+"</td></tr>\n"+
+						//"<tr><td>"+cityDetailGlobal[slideIndex-1]["perex"]+"</td></tr>\n"+
+						"</table>";
+
+			}
 		}
 
 	</script>
@@ -775,9 +757,6 @@
 			elem.style.height = '100%';
 			document.getElementById("divWordCloud").appendChild(elem);
 			var countryIso  = findCountryISO(json["name"]);
-			console.log(countryIso);
-
-
 			//BN for PM2.5 info and the two bars 
 			var stationname = findStation( json["name"] );
 			console.log("station name is : " + stationname +  json["name"] )
