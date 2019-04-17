@@ -110,7 +110,7 @@ function addBubbles(){
 				"<br/>" +
 "<table><tbody>" +
 					"<tr><td align='center' colspan=2 class='indextitle'>  Sentimental Reviews </td></tr>"+ 
-					"<tr><td align='left' class='tooltitle'>Redd Review Index</td><td align='right' class='" + data.Senti_Class +"'>" + Number(data.pos_perc).toFixed(2) + "</td></tr>" +
+					"<tr><td align='left' class='tooltitle'>Reddit Review Index</td><td align='right' class='" + data.Senti_Class +"'>" + Number(data.pos_perc).toFixed(2) + "</td></tr>" +
 					"<tr><td align='left' class='tooltitle'>Happiness Index::</td><td align='right' class=" + data.happiness_Class +">" + Number(data.happiness_index).toFixed(2) + "</td></tr>" +
 					"<tr><td align='center' colspan=2 class='indextitle'>  Price Factor</td></tr>"+ 
 					"<tr><td align='left' class='tooltitle'>Price Index:</td><td align='right' class='" + data.Price_Class +"'>" + data.COL_Index + "</td></tr>" +
