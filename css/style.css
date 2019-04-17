@@ -1,7 +1,7 @@
 
 
 
-body {	
+html, body {		
 }
 
 .main-div {
@@ -10,7 +10,7 @@ body {
 	border-color: #dddddd;		
 	padding: 10px;	
 	box-sizing:border-box;
-	text-align: left;
+	text-align: left;	
 }
 
 #divContainer {
@@ -26,7 +26,8 @@ body {
 
 #divMap {	
 	grid-column: 1;
-	grid-row: 2;		
+	grid-row: 2;		       
+    position: relative;	
 }
 
 #divBottom {	
