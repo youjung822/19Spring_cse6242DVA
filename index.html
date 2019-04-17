@@ -196,14 +196,14 @@
 	
 	<div id="inputDialog" title="- Tell us more about the trip -">			
 		<form>
-			<fieldset style="height:280px;">
+			<fieldset style="height:240px;">
 			
 				<div>
-					<label for="name" class="form-label">Budget</label>				
+					<label for="name" class="form-label">Travel Style</label>				
 					<ul id="selectBudget" class="select-box">
-						<li class="ui-widget-content" id="budget-low">Low</li>
-						<li class="ui-widget-content" id="budget-mid">Mid</li>
-						<li class="ui-widget-content" id="budget-high">High</li>
+						<li class="ui-widget-content" id="budget-low">Budget</li>
+						<li class="ui-widget-content" id="budget-mid">Middle</li>
+						<li class="ui-widget-content" id="budget-high">Luxery</li>
 					</ol>
 				</div>
 				
@@ -214,12 +214,7 @@
 						<li class="ui-widget-content" id="density-mid">Mid</li>
 						<li class="ui-widget-content" id="density-high">High</li>
 					</ol>
-				</div>
-				
-				<div>
-					<label for="name" class="form-label">Trip Duration</label>				
-					<input style="margin-left:50px;" type="text" id="tripDuartion" value="" >				
-				</div>
+				</div>							
 								
 				<div id="selectCategory">					
 					<input type="checkbox" name="check[]" id="chkDiscovering" title="discovering">
@@ -695,11 +690,11 @@
 		function loadDetailDiv(index){
             var cityData = findCity(index);
             console.log(cityData);
-            document.getElementById("divWordCloud").innerHTML = "";
+            document.getElementById("divWordCloud").innerHTML = "<div style='text-align:center;'>Word Cloud</div>";
             var elem = document.createElement("img");
             elem.src = "wordcloud/" + cityData.city_name.toLowerCase() + ".png";
             elem.style.width = '100%';
-            elem.style.height = '100%';
+            elem.style.height = '90%';
             document.getElementById("divWordCloud").appendChild(elem);
             var countryIso  = cityData.country_iso;
             //BN for PM2.5 info and the two bars
