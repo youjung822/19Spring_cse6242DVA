@@ -91,7 +91,7 @@
 			background-color:#4F628E;
 			width: 100px;
 		}
-		table, td {
+		.table1 {
 			vertical-align:top;
 			text-align:left;
 			word-wrap: break-word;
@@ -740,7 +740,7 @@
 			if (slides[slideIndex-1] != null){
 				slides[slideIndex-1].style.display = "block";
 				//console.log(cityDetailGlobal[slideIndex-1])
-				document.getElementById('sliderDsc').innerHTML = "<table class=\"table \" style=\"width:100%\">\n"+
+				document.getElementById('sliderDsc').innerHTML = "<table class=\"table1 \" style=\"width:100%\">\n"+
 						"<tr><td><b>"+cityDetailGlobal[slideIndex-1]["POIName"]+"</b></td></tr>\n"+
 						"<tr><td>Rating: "+cityDetailGlobal[slideIndex-1]["rating"]+"</td></tr>\n"+
 						//"<tr><td>"+cityDetailGlobal[slideIndex-1]["perex"]+"</td></tr>\n"+
