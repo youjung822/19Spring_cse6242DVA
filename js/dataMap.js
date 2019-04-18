@@ -7,6 +7,8 @@ var map = new Datamap({
 			
 	fills: {
 		defaultFill: '#eeeeee',
+		"No Data": '#eeeeee',
+		"Not Affordable": 'grey',
 		colorRank0: 'rgba(0,128,0,1)',
 		colorRank1: 'rgba(32,135,0,0.96)',
 		colorRank2: 'rgba(51,141,0,0.92)',
@@ -33,6 +35,9 @@ var map = new Datamap({
 		colorPink: 'pink',
 		colorBrown: 'brown',
 		colorBlack: 'black',
+		Budget: '#aed6f1',
+		Midrange: '#5dade2',
+		Luxury: '#1a5276',
 	}
 	,
 	bubblesConfig: {
@@ -127,3 +132,41 @@ function addBubbles(){
 	);
 
 }
+
+function addLegend2(layer, data, options) {
+  data = data || {};
+  if ( !this.options.fills ) {
+    return;
+  }
+
+  var html = '<dl>';
+  if ( data.legendTitle ) {
+    html = '<h2>' + data.legendTitle + '</h2>' + html;
+  }
+  for ( var fillKey in this.options.fills ) {
+
+    if ( fillKey === 'defaultFill') {
+      if ( data.defaultFillName ) {
+        html += '<dt>' + data.defaultFillName + ': </dt>';
+      }
+      else {
+        continue;
+      }
+    }
+    else {
+    	if ((fillKey === 'No Data') || (fillKey === 'Not Affordable')|| (fillKey === 'Budget')|| (fillKey === 'Midrange') || (fillKey === 'Luxury')){
+    		html += '<dt>' + fillKey + ': </dt>';
+    	}
+      
+    }
+    if ((fillKey === 'No Data') || (fillKey === 'Not Affordable') || (fillKey === 'Budget') || (fillKey === 'Midrange') || (fillKey === 'Luxury')){
+    	html += '<dd style="background-color:' +  this.options.fills[fillKey] + '">&nbsp;</dd>';
+    }
+  }
+  html += '</dl>';
+  var hoverover = d3.select( this.options.element ).append('div')
+    .attr('class', 'datamaps-legend')
+    .html(html);
+} 
+
+map.addPlugin("mylegend", addLegend2);

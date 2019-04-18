@@ -5,7 +5,7 @@ $( function() {
 
 	function processUserInput() {							
 																	
-			dialog.dialog( "close" );				
+			// dialog.dialog( "close" );				
 			
 			$("#divMain").removeClass("transparent");
 			$("#divMain").addClass("fullyVisible");															
@@ -33,12 +33,57 @@ $( function() {
 											
 			// update to top panel
 			$("#density").val(selectedDensity);
-			
-								
+
+
+
+			budgetinput = $("#selectbudgetperday").val();
+			$("#selectbudgetperday").val(budgetinput);
+			//colourisemap()
+			console.log(budgetinput);
+			d3.csv("budget_country.csv", function(error, data) {
+				data.forEach(function(d){
+					d.country_code = d.country_code;
+					d.budget = +d.budget;
+					d.midrange = +d.midrange;
+					d.luxury = +d.luxury;
+				});
+				data.forEach(function(d){
+					if (budgetinput >= d.luxury){
+						var temp = {};
+						temp[d.country_code] = "#1a5276";
+						map.updateChoropleth(temp);
+						//console.log(temp);
+						return
+					}
+					else if (budgetinput >= d.midrange){
+						var temp = {};
+						temp[d.country_code] = "#5dade2";
+						map.updateChoropleth(temp);
+						//console.log(temp);
+						return
+					}
+					else if (budgetinput >= d.budget){
+						var temp = {};
+						temp[d.country_code] = "#aed6f1";
+						map.updateChoropleth(temp);
+						//console.log(temp);
+						return
+					}
+					else if (budgetinput < d.budget){
+						var temp = {};
+    					temp[d.country_code] = "grey";
+    					map.updateChoropleth(temp);
+    					return
+    				}
+    				else {return}
+    			})
+			})
+			map.mylegend({legendTitle: "Travel Style Given Budget"})
+			// dialog.dialog( "close" );
 			// call to rerun analyze
-			analyze();						
-			
-	}
+			analyze();
+			dialog.dialog( "close" );
+		}
 
 	dialog = $("#inputDialog").dialog({
 		autoOpen: false,

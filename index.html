@@ -91,7 +91,7 @@
 			background-color:#4F628E;
 			width: 100px;
 		}
-		.table1 {
+		table, td {
 			vertical-align:top;
 			text-align:left;
 			word-wrap: break-word;
@@ -162,6 +162,16 @@
 			animation-name: fade;
 			animation-duration: 1.5s;
 		}
+
+		.datamaps-legend dt, .datamaps-legend dd {
+        float: none;
+        font-size: 12px;
+    	}
+    	.datamaps-legend {
+    	padding: 28px;	
+        top: -7px;
+        font-size: 12px;
+    	}
 		/* index display */
 		.tooltitle {background-color: white; color: black }
 		.indextitle {background-color: Beige; color:black }
@@ -192,7 +202,8 @@
 	<script src="./js/import/datamaps.world.min.js?v=1"></script>
 	<script src="./js/import/jquery-1.12.4.js"></script>
 	<script src="./js/import/jquery-ui.js"></script>				
-	<script src="./js/import/zInput.js"></script>			
+	<script src="./js/import/zInput.js"></script>
+	<script> var budgetinput = 0; console.log(budgetinput)</script>
 	
 	<div id="inputDialog" title="- Tell us more about the trip -">			
 		<form>
@@ -203,10 +214,15 @@
 					<ul id="selectBudget" class="select-box">
 						<li class="ui-widget-content" id="budget-low">Budget</li>
 						<li class="ui-widget-content" id="budget-mid">Middle</li>
-						<li class="ui-widget-content" id="budget-high">Luxery</li>
+						<li class="ui-widget-content" id="budget-high">Luxury</li>
 					</ol>
 				</div>
 				
+				<div>
+					<label for="name" class="form-label">Budget in USD per Day</label>	
+					<input onkeyup="updateValue(this.value)" style="margin-left:50px;" type="number" id="selectbudgetperday" value=80 />							
+				</div>
+
 				<div>
 					<label for="name" class="form-label">Density</label>				
 					<ul id="selectDensity" class="select-box">
@@ -268,6 +284,7 @@
 					
 				</div>
 				<div id="divRight" class="main-div">
+					testing
 					<!-- Youjung, please add top 10 / 15 / 20 accordion here -->
 				</div>
 			</div>
@@ -326,6 +343,47 @@
 			addBubbles();
 
 		}
+		// d3.csv("budget_country.csv", function(error, data) {
+		// 	data.forEach(function(d){
+		// 		d.country_code = d.country_code;
+		// 		d.budget = +d.budget;
+		// 		d.midrange = +d.midrange;
+		// 		d.luxury = +d.luxury;
+		// 	});
+		// 	data.forEach(function(d){
+		// 		if (budgetinput >= d.luxury){
+		// 			var temp = {};
+  //   				temp[d.country_code] = "#1a5276";
+  //   				map.updateChoropleth(temp);
+  //   				//console.log(temp);
+  //   				return
+  //   			}
+  //   			else if (budgetinput >= d.midrange){
+  //   				var temp = {};
+  //   				temp[d.country_code] = "#5dade2";
+  //   				map.updateChoropleth(temp);
+  //   				//console.log(temp);
+  //   				return
+  //   			}
+  //   			else if (budgetinput >= d.budget){
+  //   				var temp = {};
+  //   				temp[d.country_code] = "#aed6f1";
+  //   				map.updateChoropleth(temp);
+  //   				//console.log(temp);
+  //   				return
+  //   			}
+  //   			else if (budgetinput < d.budget){
+  //   				var temp = {};
+  //   				temp[d.country_code] = "grey";
+  //   				map.updateChoropleth(temp);
+  //   				return
+  //   			}
+  //   			else {return}
+  //   		})
+		// })
+		// map.mylegend({legendTitle: "Travel Style Given Budget"})
+
+		
 
 		// fetch all data from database
 		function getAllCities(data)
@@ -655,6 +713,11 @@
 					.style("fill", "#636363");
 		}
 
+		//update val
+		function updateValue(value) { 
+			$("#budgetperday").val(value);   
+		}
+
 		//Slide function
 		function plusSlides(n) {
 			showSlides(slideIndex += n);
@@ -677,7 +740,7 @@
 			if (slides[slideIndex-1] != null){
 				slides[slideIndex-1].style.display = "block";
 				//console.log(cityDetailGlobal[slideIndex-1])
-				document.getElementById('sliderDsc').innerHTML = "<table class=\"table1 \" style=\"width:100%\">\n"+
+				document.getElementById('sliderDsc').innerHTML = "<table class=\"table \" style=\"width:100%\">\n"+
 						"<tr><td><b>"+cityDetailGlobal[slideIndex-1]["POIName"]+"</b></td></tr>\n"+
 						"<tr><td>Rating: "+cityDetailGlobal[slideIndex-1]["rating"]+"</td></tr>\n"+
 						//"<tr><td>"+cityDetailGlobal[slideIndex-1]["perex"]+"</td></tr>\n"+
@@ -752,8 +815,9 @@
 						 }  });
 						 
 			createbar(json["country_iso"]);
-			createplot(json["country_iso"]);   
-			// YL PM2.5 ends
+			createplot(json["country_iso"]);  
+
+
 
 			//YJ Added to sync with bubble interaction --begin
 			index = findAccordion(json["name"]);
@@ -772,6 +836,48 @@
 			changepopup();
 			//BN
 		});
+		
+		d3.csv("budget_country.csv", function(error, data) {
+			data.forEach(function(d){
+				d.country_code = d.country_code;
+				d.budget = +d.budget;
+				d.midrange = +d.midrange;
+				d.luxury = +d.luxury;
+			});
+			data.forEach(function(d){
+				if (budgetinput >= d.luxury){
+					var temp = {};
+    				temp[d.country_code] = "#1a5276";
+    				map.updateChoropleth(temp);
+    				//console.log(temp);
+    				return
+    			}
+    			else if (budgetinput >= d.midrange){
+    				var temp = {};
+    				temp[d.country_code] = "#5dade2";
+    				map.updateChoropleth(temp);
+    				//console.log(temp);
+    				return
+    			}
+    			else if (budgetinput >= d.budget){
+    				var temp = {};
+    				temp[d.country_code] = "#aed6f1";
+    				map.updateChoropleth(temp);
+    				//console.log(temp);
+    				return
+    			}
+    			else if (budgetinput < d.budget){
+    				var temp = {};
+    				temp[d.country_code] = "grey";
+    				map.updateChoropleth(temp);
+    				return
+    			}
+    			else {return}
+    		})
+		})
+
+		map.mylegend({legendTitle: "Travel Style Given Budget"})
+
 	</script>
 
 <script>
