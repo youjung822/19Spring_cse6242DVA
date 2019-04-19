@@ -8,7 +8,6 @@ var map = new Datamap({
 	fills: {
 		defaultFill: '#eeeeee',
 		"No Data": '#eeeeee',
-		"Not Affordable": 'grey',
 		colorRank0: 'rgba(0,128,0,1)',
 		colorRank1: 'rgba(32,135,0,0.96)',
 		colorRank2: 'rgba(51,141,0,0.92)',
@@ -38,6 +37,7 @@ var map = new Datamap({
 		Budget: '#aed6f1',
 		Midrange: '#5dade2',
 		Luxury: '#1a5276',
+		"Not Affordable": 'grey',
 	}
 	,
 	bubblesConfig: {
@@ -133,40 +133,120 @@ function addBubbles(){
 
 }
 
-function addLegend2(layer, data, options) {
-  data = data || {};
-  if ( !this.options.fills ) {
-    return;
-  }
+// function addLegend2(layer, data, options) {
+//   data = data || {};
+//   if ( !this.options.fills ) {
+//     return;
+//   }
 
-  var html = '<dl>';
-  if ( data.legendTitle ) {
-    html = '<h2>' + data.legendTitle + '</h2>' + html;
-  }
-  for ( var fillKey in this.options.fills ) {
+//   var html = '<dl>';
+//   if ( data.legendTitle ) {
+//     html = '<h4>' + data.legendTitle + '</h4>' + html;
+//   }
+//   for ( var fillKey in this.options.fills ) {
 
-    if ( fillKey === 'defaultFill') {
-      if ( data.defaultFillName ) {
-        html += '<dt>' + data.defaultFillName + ': </dt>';
-      }
-      else {
-        continue;
-      }
-    }
-    else {
-    	if ((fillKey === 'No Data') || (fillKey === 'Not Affordable')|| (fillKey === 'Budget')|| (fillKey === 'Midrange') || (fillKey === 'Luxury')){
-    		html += '<dt>' + fillKey + ': </dt>';
-    	}
+//     if ( fillKey === 'defaultFill') {
+//       if ( data.defaultFillName ) {
+//         html += '<dt>' + data.defaultFillName + ': </dt>';
+//       }
+//       else {
+//         continue;
+//       }
+//     }
+//     else {
+//     	if ((fillKey === 'No Data') || (fillKey === 'Not Affordable')|| (fillKey === 'Budget')|| (fillKey === 'Midrange') || (fillKey === 'Luxury')){
+//     		html += '<dt>' + fillKey + ': </dt>';
+//     	}
       
-    }
-    if ((fillKey === 'No Data') || (fillKey === 'Not Affordable') || (fillKey === 'Budget') || (fillKey === 'Midrange') || (fillKey === 'Luxury')){
-    	html += '<dd style="background-color:' +  this.options.fills[fillKey] + '">&nbsp;</dd>';
-    }
-  }
-  html += '</dl>';
-  var hoverover = d3.select( this.options.element ).append('div')
-    .attr('class', 'datamaps-legend')
-    .html(html);
-} 
+//     }
+//     if ((fillKey === 'No Data') || (fillKey === 'Not Affordable') || (fillKey === 'Budget') || (fillKey === 'Midrange') || (fillKey === 'Luxury')){
+//     	html += '<dd style="background-color:' +  this.options.fills[fillKey] + '">&nbsp;</dd>';
+//     }
+//   }
+//   html += '</dl>';
+//   var hoverover = d3.select( this.options.element ).append('div')
+//     .attr('class', 'datamaps-legend')
+//     .html(html);
+// } 
+
+
+
+
+
+function addLegend2(layer, data, options) {
+	data = data || {};
+	if ( !this.options.fills ) {
+		return;
+	}
+	var html = '<dl>';
+	var label = '';
+	if ( data.legendTitle ) {
+		html = '<h4>' + data.legendTitle + '</h4>' + html;
+	}
+	for ( var fillKey in this.options.fills ) {
+		if ( fillKey === 'defaultFill') {
+			if (! data.defaultFillName ) {
+				continue;
+			}
+			label = data.defaultFillName;
+		} else {
+			if (data.labels && data.labels[fillKey]) {
+				label = data.labels[fillKey];
+			} else {
+				if ((fillKey === 'No Data') || (fillKey === 'Not Affordable') || (fillKey === 'Budget') || (fillKey === 'Midrange') || (fillKey === 'Luxury')){
+					label= '' + fillKey;
+					html += '<dd style="background-color:' +  this.options.fills[fillKey] + '">&nbsp;</dd>';
+					html += '<dt>' + label + '</dt>'+ '<br>';
+				}
+
+			}
+		}
+	}
+	html += '</dl>';
+	var hoverover = d3.select( this.options.element ).append('div')
+	.attr('class', 'datamaps-legend')
+	.html(html);
+}
 
 map.addPlugin("mylegend", addLegend2);
+
+// function addLegend3(layer, data, options) {
+//   data = data || {};
+//   if ( !this.options.fills ) {
+//     return;
+//   }
+
+//   var html2 = '<dl>';
+//   if ( data.legendTitle ) {
+//     html2 = '<h2>' + data.legendTitle + '</h2>' + html2;
+//   }
+//   for ( var fillKey in this.options.fills ) {
+
+//     if ( fillKey === 'defaultFill') {
+//       if ( data.defaultFillName ) {
+//         html2 += '<dt>' + data.defaultFillName + ': </dt>';
+//       }
+//       else {
+//         continue;
+//       }
+//     }
+//     else {
+//     	if (!((fillKey === 'No Data') || (fillKey === 'Not Affordable')|| (fillKey === 'Budget')|| (fillKey === 'Midrange') || (fillKey === 'Luxury'))){
+//     		html2 += '<dt>' + fillKey + ': </dt>';
+//     	}
+      
+//     }
+//     if (!((fillKey === 'No Data') || (fillKey === 'Not Affordable')|| (fillKey === 'Budget')|| (fillKey === 'Midrange') || (fillKey === 'Luxury'))){
+//     	html2 += '<dd style="background-color:' +  this.options.fills[fillKey] + '">&nbsp;</dd>';
+//     }
+//   }
+//   html2 += '</dl>';
+//   var hoverover = d3.select( this.options.element ).append('div')
+//     .attr('class', 'datamaps-legend2')
+//     .html(html2);
+// } 
+
+// map.addPlugin("mylegend2", addLegend3);
+
+
+

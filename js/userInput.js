@@ -39,7 +39,7 @@ $( function() {
 			budgetinput = $("#selectbudgetperday").val();
 			$("#selectbudgetperday").val(budgetinput);
 			//colourisemap()
-			console.log(budgetinput);
+			
 			d3.csv("budget_country.csv", function(error, data) {
 				data.forEach(function(d){
 					d.country_code = d.country_code;
@@ -79,10 +79,11 @@ $( function() {
     			})
 			})
 			map.mylegend({legendTitle: "Travel Style Given Budget"})
-			// dialog.dialog( "close" );
-			// call to rerun analyze
-			analyze();
 			dialog.dialog( "close" );
+			// call to rerun analyze
+			
+			dialog.dialog( "close" );
+			analyze();
 		}
 
 	dialog = $("#inputDialog").dialog({
