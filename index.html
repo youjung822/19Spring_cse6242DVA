@@ -462,7 +462,7 @@
 		function generateTop20Ranking(){
 			if (cities != null)
 				for (i = 0; i < 20; i++){
-					var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 50-i*2, fillKey: 'colorRank'+i, country_iso: cities[i].country_iso,
+					var bubble = { name: cities[i].city, latitude: cities[i].lat, longitude: cities[i].lng, radius: 25-i*1, fillKey: 'colorRank'+i, country_iso: cities[i].country_iso,
 					rating: cities[i].rating,Safety_Class: cities[i].Safety_Class, advice: cities[i].advice, Price_Class: cities[i].Price_Class,COL_Index: cities[i].COL_Index,
 					Crime_class: cities[i].Crime_class, Crime_index : cities[i].Crime_index, happiness_Class: cities[i].happiness_Class,happiness_index: cities[i].happiness_index,
 					Senti_Class: cities[i].Senti_Class , pos_perc: cities[i].pos_perc
