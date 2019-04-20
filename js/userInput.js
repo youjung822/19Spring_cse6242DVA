@@ -40,7 +40,7 @@ $( function() {
 			$("#selectbudgetperday").val(budgetinput);
 			//colourisemap()
 			
-			d3.csv("budget_country.csv", function(error, data) {
+			d3.csv("./data/budget_country.csv", function(error, data) {
 				data.forEach(function(d){
 					d.country_code = d.country_code;
 					d.budget = +d.budget;

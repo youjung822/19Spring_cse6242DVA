@@ -838,7 +838,7 @@
 			//BN
 		});
 		
-		d3.csv("budget_country.csv", function(error, data) {
+		d3.csv("./data/budget_country.csv", function(error, data) {
 			data.forEach(function(d){
 				d.country_code = d.country_code;
 				d.budget = +d.budget;
@@ -922,7 +922,7 @@
 						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 		
 				// Get the data
-				d3.csv("world_rainfall.csv", function(error, data) {
+				d3.csv("./data/world_rainfall.csv", function(error, data) {
 					// Scale the range of the data
 					x.domain(data.map(function (d) {
 									return d.countrycode;
@@ -967,7 +967,7 @@
 		
 				///////////////////////
 				// Parse the Data
-				d3.csv("world_temp.csv", function(data) {
+				d3.csv("./data/world_temp.csv", function(data) {
 		
 				///////////////////////
 				// Chart Size Setup
