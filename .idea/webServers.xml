@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="9c3d73c9-04a2-4688-b989-e6f1e9d7f8bf" name="AWS" url="http://ec2-3-210-52-157.compute-1.amazonaws.com">
+        <fileTransfer host="ec2-3-210-52-157.compute-1.amazonaws.com" port="22" privateKey="$USER_HOME$/GT/19Spring_6264DVA/group/main-servers-key-pairs.pem" rootFolder="/var/www/html" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
